@@ -144,6 +144,7 @@ int getTriggerState() {
 
 // this debounce method waits for Debounce_MinTriggerDownCount sequential TRIGGER_CLOSED reads
 // you can be sure that after a reasonable number of idential sequential reads that the state is stable
+// this is based on code from http://www.ganssle.com/debouncing-pt2.htm
 bool debounceTriggerSequential() {
   // increment counter and keep checking
   Debounce_PinSameStateCount++;
