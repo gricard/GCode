@@ -121,17 +121,15 @@ v0.6  - Changes to variables to reduce memory usage
       - complete 6/2/13
       - release!
       
-v0.7  - 
+v0.7  - Clean up use of "TS" and "MS" in var names. 
+      - Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
      
 TODO:
 
 For v0.7:   
-     + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
      + Clean up trigger state tracking (Prog_PriorTriggerState, Prog_TriggerState, Trigger_State)
      + Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
      + interrupt handling (timer interrupt + counter  (debounce))
-     + Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
-     + Clean up use of "TS" and "MS" in var names. pick one.
      + Fix bug with LED staying solid yellow as ramp winds down
 
      + shot queue?
@@ -145,3 +143,4 @@ For v0.7:
      + LCD display support
      + Support two pin multi color led like on the WAS Viking board?
      + Implement comment-based documentation generation, like doxygen
+     + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
