@@ -140,7 +140,11 @@ three more times, not five.
           if( Op_RampStartShotCount >= RAMP_START_MIN_SHOTS ) {
             DEBUG_PRINTLN("Ramp started");
             Op_RampStarted = true;
-            Op_RampShotsLeft = 3;
+            
+            // we're taking one shot now, so queue two more shots
+            // since we can only have three shots per pull/release
+            // and do the same below when we reset the shot queue
+            Op_RampShotsLeft = 2;
           }
         }
 
@@ -150,7 +154,7 @@ three more times, not five.
         // reset shot queue on pull
         if( Op_TriggerWasPulled ) {
           DEBUG_PRINTLN("Ramp shot queue reset");
-          Op_RampShotsLeft = 3 ; // added shot is subtracted right below this
+          Op_RampShotsLeft = 2;
         }        
         
         // keep shooting if we're maintaining proper pulls per second
