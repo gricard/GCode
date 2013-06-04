@@ -1,5 +1,5 @@
 /*
-GCode 
+GCode v0.6
 Board code for paintball guns
 Copyright (C) 2013 Gabriel Ricard
 
@@ -16,43 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-About:
-This piece of software is intended to be used with Arduino-compatible boards powering
-paintball guns. It may eventually grow beyond that, but right now the focus is on 
-Arduino. 
-
-I created this mainly due to my curiosity with how paintball guns work, and well, 
-because I could. I've been involved with the Free Software Foundation and other open source
-projects (Linux, PHP, etc.) in the past and agree with the ideals of the open source community.
-
-Currently it has only been used in an AKA Viking with a custom board setup based around the Femtoduino board.
-
-
-License:
-This software is currently licensed for use and redistribution under the GNU GPL v3. 
-This license does not currently allow derivative works that do not provide full source code.
-I may reevaluate this decision later. For now, if you wish to use this code in a closed source
-manner, please consult me first by emailing me at sumorai@gmail.com. Thank you.
-
-Notes:
-This software is designed for use with the stock Arduino IDE. 
-It is broken up into multiple files:
-   GCode.ino - main code file
-   Firing.ino - code for firing mode 
-   Programming.ino - code for programming mode
-   Eyes.ino - code for manipulating breakbeam eye systems
-   LED.ino - code for manipulating RGB LED
-   Trigger.ino - code for handling trigger input
-   config.h - primary means of configuring the code
-   globals.h - global state variables and related constants/definitions
-   debug.h - debugging macros & configuration
-   byte.h - a hack to get around a compilation error with the Arduino IDE
-
-Contributing:
-Anyone is welcome to contribute to this project, or to fork it and work on it on their own.
-I ask that if you intend to contribute code back to the GCode project that you ensure you
-follow the same coding style used in this code so there is a uniformity to the codebase.
+Please read the README.txt
 
 */
 
@@ -244,7 +208,6 @@ float convertROFValue(byte ROF) {
     return 1.0;
   }
 }
-
 
 // this isn't really used anymore, but could be useful for debugging
 #ifdef DEBUG_MODE

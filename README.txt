@@ -16,6 +16,58 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+About
+------------------------------------------------------------------------------------------
+This piece of software is intended to be used with Arduino-compatible boards powering
+paintball guns. It may eventually grow beyond that, but right now the focus is on 
+Arduino. 
+
+I created this mainly due to my curiosity with how paintball guns work, and well, 
+because I could. I've been involved with the Free Software Foundation and other open 
+source projects (Linux, PHP, etc.) in the past and agree with the ideals of the open 
+source community.
+
+Currently it has only been used in an AKA Viking with a custom board setup based around 
+the Femtoduino board.
+
+License
+------------------------------------------------------------------------------------------
+This software is currently licensed for use and redistribution under the GNU GPL v3. 
+This license does not currently allow derivative works that do not provide full source 
+code. I may reevaluate this decision later. For now, if you wish to use this code in a 
+closed source manner, please consult me first by emailing me at sumorai@gmail.com. 
+Thank you.
+
+Notes
+------------------------------------------------------------------------------------------
+This software is designed for use with the stock Arduino IDE. 
+It is broken up into multiple files:
+   GCode.ino - main code file
+   Firing.ino - code for firing mode 
+   Programming.ino - code for programming mode
+   Eyes.ino - code for manipulating breakbeam eye systems
+   LED.ino - code for manipulating RGB LED
+   Trigger.ino - code for handling trigger input
+   config.h - primary means of configuring the code
+   globals.h - global state variables and related constants/definitions
+   debug.h - debugging macros & configuration
+   byte.h - a hack to get around a compilation error with the Arduino IDE
+
+Contributing
+------------------------------------------------------------------------------------------
+Anyone is welcome to contribute to this project, or to fork it and work on it on their 
+own. I ask that if you intend to contribute code back to the GCode project that you ensure
+you follow the same coding style used in this code so there is a uniformity to the 
+codebase.
+
+Disclaimer
+------------------------------------------------------------------------------------------
+Use at your own risk! I assume no responsibility for anything that occurs while using this
+code. Paintball guns are dangerous if handled improperly. Always wear a mask around a
+paintball gun and treat it as if the safety is off. Don't be dumb. 
+
+
+
 
 Version History
       
@@ -72,15 +124,14 @@ v0.7  -
 TODO:
 
 For v0.7:   
-      + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
-      + Clean up trigger state tracking (Prog_PriorTriggerState, Prog_TriggerState, Trigger_State)
-      + Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
-      + interrupt handling (timer interrupt + counter  (debounce))
-      + Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
-      + Move printTriggerState() into debug.h and rename that to Debug.ino
-      + Clean up use of "TS" and "MS" in var names. pick one.
-      + Fix bug with LED staying solid yellow as ramp winds down
-
+     + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
+     + Clean up trigger state tracking (Prog_PriorTriggerState, Prog_TriggerState, Trigger_State)
+     + Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
+     + interrupt handling (timer interrupt + counter  (debounce))
+     + Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
+     + Move printTriggerState() into debug.h and rename that to Debug.ino
+     + Clean up use of "TS" and "MS" in var names. pick one.
+     + Fix bug with LED staying solid yellow as ramp winds down
 
      + shot queue?
      + blink eyes when waiting for a trigger pull (like the Droid board)
