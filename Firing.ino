@@ -257,7 +257,9 @@ three more times, not five.
         DEBUG_PRINTLN("First Shot");
       }
       
-      if( fireRateOver8BPS && Conf_MechDebounce > 0 ) {
+      // mech debounce method is based on the CodeX open source board software
+      // https://code.google.com/p/paintballcodex/
+      if( !fireRateOver8BPS && Conf_MechDebounce > 0 ) {
         delay(Conf_MechDebounce);
         //DEBUG_PRINT("     Mech Debounce MS= ");DEBUG_PRINTLN(Conf_MechDebounce - 1);
       }
