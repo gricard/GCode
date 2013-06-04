@@ -1,4 +1,4 @@
-GCode 
+GCode v0.6
 Board code for paintball guns
 Copyright (C) 2013 Gabriel Ricard
 
