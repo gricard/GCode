@@ -30,6 +30,8 @@ source community.
 Currently it has only been used in an AKA Viking with a custom board setup based around 
 the Femtoduino board.
 
+Follow the development of this software here: http://simonized.com/showthread.php?702
+
 License
 ------------------------------------------------------------------------------------------
 This software is currently licensed for use and redistribution under the GNU GPL v3. 
