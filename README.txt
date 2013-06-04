@@ -129,7 +129,6 @@ For v0.7:
      + Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
      + interrupt handling (timer interrupt + counter  (debounce))
      + Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
-     + Move printTriggerState() into debug.h and rename that to Debug.ino
      + Clean up use of "TS" and "MS" in var names. pick one.
      + Fix bug with LED staying solid yellow as ramp winds down
 
