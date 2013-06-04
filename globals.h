@@ -69,16 +69,16 @@ bool Op_ForceShot = false;
 bool Op_ShotWasForced = false;
 
 bool Op_UseROFCap = true;
-unsigned long Op_LastShotTS = 0;
+unsigned long Op_LastShotMS = 0;
 bool Op_TriggerWasPulled = false;
 
 // ramping items
 byte Op_RampStarted = false;
 byte Op_RampStartShotCount = 0;
 byte Op_RampShotsLeft = 3; // number of queued shots left to take
-unsigned long Op_LastPullTS = 0; // last trigger pull timestamp
-unsigned long Op_CurPullTS = 0; // current trigger pull timestamp
-unsigned long Op_RampLastPullTS = 0;
+unsigned long Op_LastPullMS = 0; // last trigger pull timestamp
+unsigned long Op_CurPullMS = 0; // current trigger pull timestamp
+unsigned long Op_RampLastPullMS = 0;
 bool Op_LastShotTaken = false;
 
 //// Firing mode setup

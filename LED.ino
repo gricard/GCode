@@ -103,7 +103,7 @@ void operatingLEDBlink() {
   bool WaitingForTriggerInput = (TRIGGER_STATE_WAITING == Prog_TriggerState);
   
   // wait at least 1 second between trigger pulls to activate
-  bool NotActivelyShooting = (millis() > (Op_LastPullTS + 1000));
+  bool NotActivelyShooting = (millis() > (Op_LastPullMS + 1000));
   
   if( LastEyeBlinkOn ) {
     if( (operationTiming - LastEyeBlink) > BLINK_INTERVAL_ON ) {
