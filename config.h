@@ -68,8 +68,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //-- Rate of Fire Limiting Configuration --------------------------------------------------
 #define RAMP_START_MIN_SHOTS 3
 #define RAMP_MIN_BPS 4
-#define RAMP_INACTIVE_TIME_BETWEEN_PULLS 1000 // # of ms allowed between pulls to maintain ramp
-#define RAMP_ACTIVE_TIME_BETWEEN_PULLS 1000 / RAMP_MIN_BPS // # of ms allowed between pulls to start ramp
+// # of ms allowed between pulls to maintain ramp
+#define RAMP_INACTIVE_TIME_BETWEEN_PULLS 1000 
+// # of ms allowed between pulls to start ramp
+#define RAMP_ACTIVE_TIME_BETWEEN_PULLS 1000 / RAMP_MIN_BPS 
 
 //-- Debounce Configuration ---------------------------------------------------------------
 // only set one of these

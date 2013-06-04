@@ -66,9 +66,9 @@ void firingMode() {
   {
     if( TRIGGER_STATE_HELD == Prog_TriggerState /*&& Prog_TriggerState != Prog_PriorTriggerState*/ ) {
       // probably don't need the prior state stuff
-      unsigned long ts = getTriggerDownMS();
+      unsigned long ms = getTriggerDownMS();
     
-      if( ts >= OP_EYES_OFF_TRIGGER_TIME ) {
+      if( ms >= OP_EYES_OFF_TRIGGER_TIME ) {
         // only do this if we haven't already changed the state
         if( !Op_ManualEyeStateChange ) {
           if( EYES_ON == Op_EyeStatus ) {
@@ -84,7 +84,7 @@ void firingMode() {
             Op_EyesBlocked = false;
           }
         }
-      } else if( ts >= OP_FORCE_SHOT_TRIGGER_TIME ) {
+      } else if( ms >= OP_FORCE_SHOT_TRIGGER_TIME ) {
         // make sure we didn't do this already
         if( !Op_ShotWasForced ) {
           DEBUG_PRINTLN("Forced shot");
@@ -98,8 +98,8 @@ void firingMode() {
       DEBUG_PRINT("Pull count: ");
       DEBUG_PRINTLN(pullCount);
       Op_FireShot = true;
-      Op_LastPullTS = Op_CurPullTS;
-      Op_CurPullTS = millis();
+      Op_LastPullMS = Op_CurPullMS;
+      Op_CurPullMS = millis();
       Op_TriggerWasPulled = true;
     } else {
       Op_TriggerWasPulled = false;
@@ -126,9 +126,9 @@ three more times, not five.
         // if we start firing shots, then figure out if we're firing fast enough to enter ramp
         if( Op_FireShot ) {
           // must maintain 1bps for first RAMP_START_MIN_SHOTS shot
-          unsigned long nextPullMinTS = Op_LastPullTS + RAMP_INACTIVE_TIME_BETWEEN_PULLS;
+          unsigned long nextPullMinMS = Op_LastPullMS + RAMP_INACTIVE_TIME_BETWEEN_PULLS;
 
-          if( Op_CurPullTS <= nextPullMinTS ) {
+          if( Op_CurPullMS <= nextPullMinMS ) {
             DEBUG_PRINT("Ramp init shot "); DEBUG_PRINTLN(Op_RampStartShotCount);
             Op_RampStartShotCount++;
           } else {
@@ -149,7 +149,7 @@ three more times, not five.
         }
 
       } else { // Op_RampStarted
-        unsigned long nextPullMinTS = Op_LastPullTS + RAMP_ACTIVE_TIME_BETWEEN_PULLS;
+        unsigned long nextPullMinMS = Op_LastPullMS + RAMP_ACTIVE_TIME_BETWEEN_PULLS;
 
         // reset shot queue on pull
         if( Op_TriggerWasPulled ) {
@@ -158,7 +158,7 @@ three more times, not five.
         }        
         
         // keep shooting if we're maintaining proper pulls per second
-        if( Op_CurPullTS <= nextPullMinTS ) {
+        if( Op_CurPullMS <= nextPullMinMS ) {
           // maintaining min. pulls per second
           // tell board to fire, ROF code will handle rate
           Op_FireShot = true;
@@ -211,21 +211,21 @@ three more times, not five.
       msBetweenShots = 0;
     }
     
-    unsigned long nextShotMinTS = Op_LastShotTS + msBetweenShots;
-    unsigned long ts = millis();
+    unsigned long nextShotMinMS = Op_LastShotMS + msBetweenShots;
+    unsigned long ms = millis();
     
     // ROF delay
-    if( Op_UseROFCap && Op_LastShotTS > 0 ) {
+    if( Op_UseROFCap && Op_LastShotMS > 0 ) {
       // using rof cap, and we've already had the first shot go, so track timing and wait if needed  
-      if( ts < nextShotMinTS ) {
+      if( ms < nextShotMinMS ) {
         // it's too soon to take another shot
         takeTheShot = false;
       }
       
       //DEBUG_PRINT("ROF Limit=");DEBUG_PRINT(curROFLimit);
       //DEBUG_PRINT(" ms=");DEBUG_PRINT(msBetweenShots);
-      //DEBUG_PRINT(" now=");DEBUG_PRINT(ts);
-      //DEBUG_PRINT(" next=");DEBUG_PRINT(nextShotMinTS);
+      //DEBUG_PRINT(" now=");DEBUG_PRINT(ms);
+      //DEBUG_PRINT(" next=");DEBUG_PRINT(nextShotMinMS);
       //DEBUG_PRINT(" take=");DEBUG_PRINTLN(takeTheShot);
     }
     
@@ -246,8 +246,8 @@ three more times, not five.
       int curROF = 0;
       unsigned long timeSinceLastShot = 0;
       
-      if( Op_LastShotTS > 0 ) {
-        timeSinceLastShot = ts - Op_LastShotTS;
+      if( Op_LastShotMS > 0 ) {
+        timeSinceLastShot = ms - Op_LastShotMS;
         curROF = 1000 / timeSinceLastShot;
         fireRateOver8BPS = (curROF > 8);
         DEBUG_PRINT("CurROF = ");DEBUG_PRINTLN(curROF);
@@ -280,7 +280,7 @@ three more times, not five.
       fireSolenoid(Op_Dwell);
       
       // track when the last shot occurred
-      Op_LastShotTS = millis();
+      Op_LastShotMS = millis();
       
       // blink RGBLED for each shot
       if( Op_EyesBlocked ) {
