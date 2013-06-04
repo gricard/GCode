@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "config.h"
+// Arduino IDE only seems to handle byte data type properly in main .ino file(s)
+// which have the main Arduino.h automatically included, so manually include this here
+#include "Arduino.h"
 
 // Wrap all global vars in macros so that we can change the get/set methods easily
 // Note: don't set the define below. this code is not implemented yet.

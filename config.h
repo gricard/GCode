@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define CONFIG_H
 
 // Arduino IDE only seems to handle byte data type properly in main .ino file(s)
-// so include this definition of a byte in other headers to eliminate compiler warnings
-#include "byte.h"
+// which have the main Arduino.h automatically included, so manually include this here
+#include "Arduino.h"
 
 
 //-- Pin Configuration --------------------------------------------------------------------
