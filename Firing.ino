@@ -35,9 +35,9 @@ need to separate firing logic into separate units:
 void firingMode() {    
 
   // need this to check for held trigger for turning eyes off
-  Prog_PriorTriggerState = Prog_TriggerState;
+  PriorTriggerState = TriggerState;
   
-  Prog_TriggerState = getTriggerState();
+  TriggerState = getTriggerState();
   
   int priorEyeState = GET_EYE_READ_STATE();
   // NOTE: need to make constants for the results of this so it's more obvious, or change var name
@@ -55,7 +55,7 @@ void firingMode() {
   }
   
   if( FIREMODE_AUTO == Conf_FireMode ) {
-    if( TRIGGER_STATE_PULLED == Prog_TriggerState || TRIGGER_STATE_HELD == Prog_TriggerState ) {
+    if( TRIGGER_STATE_PULLED == TriggerState || TRIGGER_STATE_HELD == TriggerState ) {
       //pullCount++;
       //DEBUG_PRINT("Pull count: ");
       //DEBUG_PRINTLN(pullCount);
@@ -64,7 +64,7 @@ void firingMode() {
   }
   else // semi-auto or ramp
   {
-    if( TRIGGER_STATE_HELD == Prog_TriggerState /*&& Prog_TriggerState != Prog_PriorTriggerState*/ ) {
+    if( TRIGGER_STATE_HELD == TriggerState /*&& TriggerState != PriorTriggerState*/ ) {
       // probably don't need the prior state stuff
       unsigned long ms = getTriggerDownMS();
     
@@ -93,7 +93,7 @@ void firingMode() {
       }
     }
 
-    if( TRIGGER_STATE_PULLED == Prog_TriggerState ) {
+    if( TRIGGER_STATE_PULLED == TriggerState ) {
       pullCount++;
       DEBUG_PRINT("Pull count: ");
       DEBUG_PRINTLN(pullCount);
@@ -304,11 +304,11 @@ three more times, not five.
   }
 
   // when trigger is let go, reset a few things
-  if( TRIGGER_STATE_RELEASED == Prog_TriggerState || TRIGGER_STATE_WAITING == Prog_TriggerState ) {
+  if( TRIGGER_STATE_RELEASED == TriggerState || TRIGGER_STATE_WAITING == TriggerState ) {
     
     // shot is fired, trigger is let go, turn off the led
     // only do this on release, otherwise it prematurely cuts off operatingLEDBlink();
-    if( TRIGGER_STATE_RELEASED == Prog_TriggerState ) {
+    if( TRIGGER_STATE_RELEASED == TriggerState ) {
       ledOff();
     }
     

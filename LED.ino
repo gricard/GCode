@@ -100,7 +100,7 @@ void powerOnLEDBurst(byte mode) {
 }
 
 void operatingLEDBlink() {
-  bool WaitingForTriggerInput = (TRIGGER_STATE_WAITING == Prog_TriggerState);
+  bool WaitingForTriggerInput = (TRIGGER_STATE_WAITING == TriggerState);
   
   // wait at least 1 second between trigger pulls to activate
   bool NotActivelyShooting = (millis() > (Op_LastPullMS + 1000));
