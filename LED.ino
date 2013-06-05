@@ -63,8 +63,10 @@ void setLEDRegisterColor(int regNum) {
     case REGISTER_MECH_DEBOUNCE: ledColor(LED_BLUE, brightness); break;
     case REGISTER_FSDO_DWELL:    ledColor(LED_RED, brightness); break;
     case REGISTER_FIRE_MODE:     ledColor(LED_WHITE, brightness); break;
-    case REGISTER_ROF_ON:        ledColor(LED_TEAL, brightness); break;
-    case REGISTER_ROF_OFF:       ledColor(LED_ORANGE, brightness); break;
+    case REGISTER_ROF_ON_INT:    ledColor(LED_TEAL, brightness); break;
+    case REGISTER_ROF_ON_FRAC:   ledColor(LED_ORANGE, brightness); break;
+    case REGISTER_ROF_OFF_INT:   ledColor(LED_WHITE, brightness); break; // Note: need actual colors for these!
+    case REGISTER_ROF_OFF_FRAC:  ledColor(LED_WHITE, brightness); break; // Note: need actual colors for these!
 
     default:                     ledColor(LED_WHITE, brightness);
   }

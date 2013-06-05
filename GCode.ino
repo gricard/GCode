@@ -72,12 +72,16 @@ void setup() {
   Conf_MechDebounce = EEPROM.read(REGISTER_MECH_DEBOUNCE);
   Conf_FSDODwell = EEPROM.read(REGISTER_FSDO_DWELL);
   Conf_FireMode = EEPROM.read(REGISTER_FIRE_MODE);
-  Conf_ROFEyesOn = EEPROM.read(REGISTER_ROF_ON);  
+  Conf_ROFEyesOnInt = EEPROM.read(REGISTER_ROF_ON_INT);  
+  Conf_ROFEyesOnFrac = EEPROM.read(REGISTER_ROF_ON_FRAC);  
  
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
-  Conf_ROFEyesOff = EEPROM.read(REGISTER_ROF_OFF);
+  Conf_ROFEyesOffInt = EEPROM.read(REGISTER_ROF_OFF_INT);
+  Conf_ROFEyesOffFrac = EEPROM.read(REGISTER_ROF_OFF_FRAC);
   #else 
-  Conf_ROFEyesOff = 2; // 8bps
+  // default to 8.0 bps
+  Conf_ROFEyesOffInt = 8;
+  Conf_ROFEyesOffFrac = 1;
   #endif
   
   // double check min/max config values
@@ -89,10 +93,12 @@ void setup() {
   if( Conf_MechDebounce < 1 || Conf_MechDebounce > REGISTER_MECH_DEBOUNCE_MAX ) Conf_MechDebounce = DEFAULT_MECH_DEBOUNCE;
   if( Conf_FSDODwell < 1 || Conf_FSDODwell > REGISTER_FSDO_DWELL_MAX ) Conf_FSDODwell = DEFAULT_FSDO_DWELL;
   if( Conf_FireMode < 1 || Conf_FireMode > REGISTER_FIRE_MODE_MAX ) Conf_FireMode = DEFAULT_FIRE_MODE;
-  if( Conf_ROFEyesOn < 1 || Conf_ROFEyesOn > REGISTER_ROF_ON_MAX ) Conf_ROFEyesOn = DEFAULT_ROF_EYES_ON;
+  if( Conf_ROFEyesOnInt < 1 || Conf_ROFEyesOnInt > REGISTER_ROF_ON_INT_MAX ) Conf_ROFEyesOnInt = DEFAULT_ROF_EYES_ON_INT;
+  if( Conf_ROFEyesOnFrac < 1 || Conf_ROFEyesOnFrac > REGISTER_ROF_ON_FRAC_MAX ) Conf_ROFEyesOnFrac = DEFAULT_ROF_EYES_ON_FRAC;
   
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
-  if( Conf_ROFEyesOff < 1 || Conf_ROFEyesOff > REGISTER_ROF_OFF_MAX ) Conf_ROFEyesOff = DEFAULT_ROF_EYES_OFF;
+  if( Conf_ROFEyesOffInt < 1 || Conf_ROFEyesOffInt > REGISTER_ROF_OFF_INT_MAX ) Conf_ROFEyesOffInt = DEFAULT_ROF_EYES_OFF_INT;
+  if( Conf_ROFEyesOffFrac < 1 || Conf_ROFEyesOffFrac > REGISTER_ROF_OFF_FRAC_MAX ) Conf_ROFEyesOffFrac = DEFAULT_ROF_EYES_OFF_FRAC;
   #endif
   
   // debug print the corrected values
@@ -103,8 +109,10 @@ void setup() {
   DEBUG_PRINT("   MechDebounce=");DEBUG_PRINTLN(Conf_MechDebounce);
   DEBUG_PRINT("   FSDODwell=");DEBUG_PRINTLN(Conf_FSDODwell);
   DEBUG_PRINT("   FireMode=");DEBUG_PRINTLN(Conf_FireMode);
-  DEBUG_PRINT("   ROFEyesOn=");DEBUG_PRINTLN(Conf_ROFEyesOn);
-  DEBUG_PRINT("   ROFEyesOff=");DEBUG_PRINTLN(Conf_ROFEyesOff);
+  DEBUG_PRINT("   ROFEyesOnInt=");DEBUG_PRINTLN(Conf_ROFEyesOnInt);
+  DEBUG_PRINT("   ROFEyesOnFrac=");DEBUG_PRINTLN(Conf_ROFEyesOnFrac);
+  DEBUG_PRINT("   ROFEyesOffInt=");DEBUG_PRINTLN(Conf_ROFEyesOffInt);
+  DEBUG_PRINT("   ROFEyesOffFrac=");DEBUG_PRINTLN(Conf_ROFEyesOffFrac);
   #endif
 
   // Convert register values to usable program values
@@ -114,10 +122,10 @@ void setup() {
   Conf_FSDODwell -= 1;
   
   // convert ROF register values to numerical BPS value
-  Conf_ROFEyesOn = convertROFValue(Conf_ROFEyesOn);
-  DEBUG_PRINT("Eyes on ROF = ");DEBUG_PRINT(Conf_ROFEyesOn);DEBUG_PRINTLN("bps");
-  Conf_ROFEyesOff = convertROFValue(Conf_ROFEyesOff);
-  DEBUG_PRINT("Eyes off ROF = ");DEBUG_PRINT(Conf_ROFEyesOff);DEBUG_PRINTLN("bps");
+  Op_ROFEyesOn = convertROFValue(Conf_ROFEyesOnInt, Conf_ROFEyesOnFrac);
+  DEBUG_PRINT("Eyes on ROF = ");DEBUG_PRINT(Op_ROFEyesOn);DEBUG_PRINTLN("bps");
+  Op_ROFEyesOff = convertROFValue(Conf_ROFEyesOffInt, Conf_ROFEyesOffFrac);
+  DEBUG_PRINT("Eyes off ROF = ");DEBUG_PRINT(Op_ROFEyesOff);DEBUG_PRINTLN("bps");
   
   // set initial dwell
   // may be modified by FSDO dwell
@@ -133,7 +141,7 @@ void setup() {
   LastEyeBlink = operationTiming;
   
   // setup ROF cap
-  Op_UseROFCap = (Conf_ROFEyesOn > 1);
+  Op_UseROFCap = (Op_ROFEyesOn > 1);
 
   // set default trigger state
   Trigger_PriorState = Trigger_State = TRIGGER_STATE_WAITING;
@@ -182,8 +190,10 @@ byte getMaxRegisterValue(int regNum) {
     case REGISTER_FSDO_DWELL:    return REGISTER_FSDO_DWELL_MAX;
     case REGISTER_FIRE_MODE:     return REGISTER_FIRE_MODE_MAX;
     
-    case REGISTER_ROF_ON:        return REGISTER_ROF_ON_MAX;
-    case REGISTER_ROF_OFF:       return REGISTER_ROF_OFF_MAX;
+    case REGISTER_ROF_ON_INT:    return REGISTER_ROF_ON_INT_MAX;
+    case REGISTER_ROF_ON_FRAC:   return REGISTER_ROF_ON_FRAC_MAX;
+    case REGISTER_ROF_OFF_INT:   return REGISTER_ROF_OFF_INT_MAX;
+    case REGISTER_ROF_OFF_FRAC:  return REGISTER_ROF_OFF_FRAC_MAX;
     default: 
       DEBUG_PRINT("ERROR: getMaxRegisterValue(): unrecognized register: ");
       DEBUG_PRINTLN(regNum);
@@ -197,13 +207,28 @@ byte getMaxRegisterValue(int regNum) {
 // 4 = 8.5bps
 // 5 = 8.75bps
 // etc.
-float convertROFValue(byte ROF) {
+float convertROFValueOld(byte ROF) {
   if( ROF > 1 ) {
     ROF -= 2; // starts at 2, so 2 is 8.0  (setting of 19 = 12.25bps, 19 - 2 = 17)
     float actualROF = ROF / 4.0; // convert quarters into wholes (17 / 4.0 = 4.25)
     actualROF += 8; // and re-add the initial 8bps it starts at (4.25 + 8 = 12.25)
     
     return actualROF;
+  } else {
+    return 1.0;
+  }
+}
+
+float convertROFValue(byte rofInt, byte rofFrac) {
+
+  if( rofInt > 1 ) {
+    float rof = rofInt;
+    
+    // fractional value is 1-11, 1 = 0.0, 2 = 0.1, etc.
+    // subtract the 1 from the value and divide by ten to get the fractional value to add to rof
+    rof += ((rofFrac - 1) / 10.0);
+    
+    return rof;
   } else {
     return 1.0;
   }

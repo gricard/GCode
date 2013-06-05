@@ -202,7 +202,7 @@ three more times, not five.
     
     // figure out current rate of fire
     int msBetweenShots = 0;
-    float curROFLimit = (EYES_ON == Op_EyeStatus ? Conf_ROFEyesOn : Conf_ROFEyesOff);
+    float curROFLimit = (EYES_ON == Op_EyeStatus ? Op_ROFEyesOn : Op_ROFEyesOff);
     
     // ROF limit of 1 is uncapped
     if( curROFLimit > 1  ) {
