@@ -123,18 +123,21 @@ v0.6  - Changes to variables to reduce memory usage
       
 v0.7  - Clean up use of "TS" and "MS" in var names. 
       - Move ROF limit conversion into setup() so ROF values in code are always the actual BPS rate
-     
+      - Clean up trigger state tracking (Prog_PriorTriggerState, Prog_TriggerState, Trigger_State)
+      - Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
+           
 TODO:
 
-For v0.7:   
-     + Clean up trigger state tracking (Prog_PriorTriggerState, Prog_TriggerState, Trigger_State)
-     + Separate registers for integer and fraction parts of ROF settings (12.5 = one register holds 12, the other holds 5)
-     + interrupt handling (timer interrupt + counter  (debounce))
-     + Fix bug with LED staying solid yellow as ramp winds down
+For v0.7:
+     + Interrupt handling (timer interrupt + counter  (debounce))
+     + Fix bug with LED staying solid color as ramp winds down
+     + Fix bug with LED flashing when holding down trigger in main menu to select register
 
+General:
+     + Add testing mode for debounce code that includes a register to change debounce schemes (sequential/delay)
      + shot queue?
      + blink eyes when waiting for a trigger pull (like the Droid board)
-     + power management / sleep
+
      + dual solenoid support
      + dual eye logic / bolt tracking
      + auto shut off (may not be possible with boards using an on/off switch)
@@ -144,3 +147,4 @@ For v0.7:
      + Support two pin multi color led like on the WAS Viking board?
      + Implement comment-based documentation generation, like doxygen
      + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
+     + power management / sleep 

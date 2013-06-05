@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // which have the main Arduino.h automatically included, so manually include this here
 #include "Arduino.h"
 
+// needed for firing modes
+#include "config.h"
+
 // Wrap all global vars in macros so that we can change the get/set methods easily
 // Note: don't set the define below. this code is not implemented yet.
 // global var access wrappers
@@ -88,8 +91,6 @@ unsigned long operationTiming = 0; // generic time tracker for firing mode (used
 int pullCount = 0; // NOTE: testing
 
 //// General operating mode
-#define MODE_PROGRAMMING 0
-#define MODE_FIRING 1
 byte OperatingMode = MODE_FIRING;
 bool Prog_WaitForTriggerRelease = false;
 
@@ -105,8 +106,14 @@ byte Conf_LoaderDelay;
 byte Conf_MechDebounce;
 byte Conf_FSDODwell;
 byte Conf_FireMode;
-float Conf_ROFEyesOn;
-float Conf_ROFEyesOff;
+byte Conf_ROFEyesOnInt;
+byte Conf_ROFEyesOnFrac;
+byte Conf_ROFEyesOffInt;
+byte Conf_ROFEyesOffFrac;
+
+// combined final value for ROF settings
+float Op_ROFEyesOn;
+float Op_ROFEyesOff;
 
 byte Trigger_PinState = -1; // for the actual pin state (HIGH/LOW)
 byte Trigger_State = -1; // store the effective state of the trigger here
