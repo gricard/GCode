@@ -102,7 +102,6 @@ void setup() {
   #endif
   
   // debug print the corrected values
-  #ifdef DEBUG_MODE
   DEBUG_PRINT("   Debounce=");DEBUG_PRINTLN(Conf_Debounce);
   DEBUG_PRINT("   Dwell=");DEBUG_PRINTLN(Conf_Dwell);
   DEBUG_PRINT("   LoaderDelay=");DEBUG_PRINTLN(Conf_LoaderDelay);
@@ -113,7 +112,6 @@ void setup() {
   DEBUG_PRINT("   ROFEyesOnFrac=");DEBUG_PRINTLN(Conf_ROFEyesOnFrac);
   DEBUG_PRINT("   ROFEyesOffInt=");DEBUG_PRINTLN(Conf_ROFEyesOffInt);
   DEBUG_PRINT("   ROFEyesOffFrac=");DEBUG_PRINTLN(Conf_ROFEyesOffFrac);
-  #endif
 
   // Convert register values to usable program values
   // setting of 1 is 0ms, so subtract one from register value
