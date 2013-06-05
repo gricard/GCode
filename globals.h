@@ -53,9 +53,9 @@ unsigned long Prog_RegisterTimeoutStart = 0;    // # of ms since we started wait
 unsigned long Prog_TriggerDownStart = 0;
 byte Prog_Mode_Debounce = 5;
 
-// Note: these aren't just prog mode are they?
-byte Prog_PriorTriggerState = 0;
-byte Prog_TriggerState = 0;
+// used by both programming mode and trigger mode
+byte PriorTriggerState = 0;
+byte TriggerState = 0;
 
 
 //// Operating mode

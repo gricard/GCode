@@ -31,16 +31,16 @@ void programmingMode() {
   
   // initial setup for programming mode
   if( Prog_WaitForTriggerRelease ) {
-    Prog_TriggerState = getTriggerState();
+    TriggerState = getTriggerState();
     
-    if( TRIGGER_STATE_RELEASED == Prog_TriggerState ||  TRIGGER_STATE_WAITING == Prog_TriggerState ) {
+    if( TRIGGER_STATE_RELEASED == TriggerState ||  TRIGGER_STATE_WAITING == TriggerState ) {
       Prog_WaitForTriggerRelease = false;
       DEBUG_PRINTLN("Trigger released, Entering programming mode...");
     }
     
     Prog_Mode = PROG_MODE_MENU;
     Prog_TriggerDownStart = 0;
-    Prog_PriorTriggerState = Prog_TriggerState = 0;
+    PriorTriggerState = TriggerState = 0;
     initialLED = false;
     
     // use specific debounce # for programming mode
@@ -53,8 +53,8 @@ void programmingMode() {
     // actual programming mode 
     
     // save off old trigger state and read in current trigger state
-    Prog_PriorTriggerState = Prog_TriggerState;
-    Prog_TriggerState = getTriggerState();
+    PriorTriggerState = TriggerState;
+    TriggerState = getTriggerState();
  
     if( PROG_MODE_MENU == Prog_Mode ) {
       // only do this once
@@ -71,7 +71,7 @@ void programmingMode() {
       // first time trigger goes down track the MS so we can see how long the user pulled the trigger
       // >= 1s = enter register programming mode
       // < 1s = change register
-      if( TRIGGER_STATE_PULLED == Prog_TriggerState || TRIGGER_STATE_HELD ==  Prog_TriggerState ) {
+      if( TRIGGER_STATE_PULLED == TriggerState || TRIGGER_STATE_HELD ==  TriggerState ) {
         if( 0 == Prog_TriggerDownStart ) {
           Prog_TriggerDownStart = millis();
         } else {
@@ -85,9 +85,9 @@ void programmingMode() {
         }
         
       } else if( Prog_TriggerDownStart > 0 &&
-          (TRIGGER_STATE_RELEASED == Prog_TriggerState ||  
-          TRIGGER_STATE_WAITING == Prog_TriggerState ||
-          TRIGGER_STATE_HELD == Prog_TriggerState)  ) {
+          (TRIGGER_STATE_RELEASED == TriggerState ||  
+          TRIGGER_STATE_WAITING == TriggerState ||
+          TRIGGER_STATE_HELD == TriggerState)  ) {
             
         int currentMS = millis();
         int pullLength = currentMS - Prog_TriggerDownStart;
