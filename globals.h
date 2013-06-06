@@ -45,6 +45,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #define GET_EYE_READ_STATE() Op_EyeReadState 
 #endif
 
+// used by both programming mode and trigger mode
+byte PriorTriggerState = 0;
+byte TriggerState = 0;
+
 
 // Programming modes
 #define PROG_MODE_MENU 0 
@@ -55,10 +59,8 @@ byte Prog_CurrentRegister = REGISTER_DEBOUNCE;   // register we're currently pro
 unsigned long Prog_RegisterTimeoutStart = 0;    // # of ms since we started waiting for input to program a register
 unsigned long Prog_TriggerDownStart = 0;
 byte Prog_Mode_Debounce = 5;
-
-// used by both programming mode and trigger mode
-byte PriorTriggerState = 0;
-byte TriggerState = 0;
+bool Prog_WaitForTriggerRelease = false;
+bool Prog_InitialLED = false;
 
 
 //// Operating mode
@@ -86,13 +88,17 @@ unsigned long Op_CurPullMS = 0; // current trigger pull timestamp
 unsigned long Op_RampLastPullMS = 0;
 bool Op_LastShotTaken = false;
 
+// combined final value for ROF settings
+float Op_ROFEyesOn;
+float Op_ROFEyesOff;
+
+
 //// Firing mode setup
 unsigned long operationTiming = 0; // generic time tracker for firing mode (used to do LED blinking to indicate on and ready)
 int pullCount = 0; // NOTE: testing
 
 //// General operating mode
 byte OperatingMode = MODE_FIRING;
-bool Prog_WaitForTriggerRelease = false;
 
 
 byte EyeMode = EYES_ON; // Note: may not need this
@@ -111,9 +117,7 @@ byte Conf_ROFEyesOnFrac;
 byte Conf_ROFEyesOffInt;
 byte Conf_ROFEyesOffFrac;
 
-// combined final value for ROF settings
-float Op_ROFEyesOn;
-float Op_ROFEyesOff;
+
 
 byte Trigger_PinState = -1; // for the actual pin state (HIGH/LOW)
 byte Trigger_State = -1; // store the effective state of the trigger here

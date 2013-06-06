@@ -26,9 +26,6 @@ into one code file before compiling, so this already has all includes
 void programmingMode() {
   // OperatingMode = MODE_PROGRAMMING
   
-  // track whether we've turned on the LED yet
-  int initialLED;
-  
   // initial setup for programming mode
   if( Prog_WaitForTriggerRelease ) {
     TriggerState = getTriggerState();
@@ -41,7 +38,7 @@ void programmingMode() {
     Prog_Mode = PROG_MODE_MENU;
     Prog_TriggerDownStart = 0;
     PriorTriggerState = TriggerState = 0;
-    initialLED = false;
+    Prog_InitialLED = false;
     
     // use specific debounce # for programming mode
     Debounce_MinTriggerDownCount = 5; //Prog_Mode_Debounce;
@@ -58,9 +55,9 @@ void programmingMode() {
  
     if( PROG_MODE_MENU == Prog_Mode ) {
       // only do this once
-      if( !initialLED ) {
+      if( !Prog_InitialLED ) {
         setLEDRegisterColor(Prog_CurrentRegister);
-        initialLED = true;
+        Prog_InitialLED = true;
       }
         
       // DEBUG_PRINTLN("Main Programming Menu");
