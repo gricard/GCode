@@ -278,18 +278,22 @@ three more times, not five.
         }
       }
 
-      // and now actually fire the shot
-      fireSolenoid(Op_Dwell);
-      
-      // track when the last shot occurred
-      Op_LastShotMS = millis();
-      
+
       // blink RGBLED for each shot
       if( Op_EyesBlocked ) {
         ledColor(EYES_OFF_LED_COLOR, 25);
       } else {
         ledColor(EYES_ON_LED_COLOR, 25);
       }
+
+      // and now actually fire the shot
+      fireSolenoid(Op_Dwell);
+
+      // blink off
+      ledOff();
+      
+      // track when the last shot occurred
+      Op_LastShotMS = millis();
         
       // set this after the shot, then after it goes back through the loop and the eye code updates they'll be unblocked
       Op_EyesBlocked = true;
