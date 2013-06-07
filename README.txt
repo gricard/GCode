@@ -53,7 +53,6 @@ It is broken up into multiple files:
    config.h - primary means of configuring the code
    globals.h - global state variables and related constants/definitions
    debug.h - debugging macros & configuration
-   byte.h - a hack to get around a compilation error with the Arduino IDE
 
 Contributing
 ------------------------------------------------------------------------------------------
