@@ -41,7 +41,7 @@ void programmingMode() {
     Prog_InitialLED = false;
     
     // use specific debounce # for programming mode
-    Debounce_MinTriggerDownCount = 5; //Prog_Mode_Debounce;
+    Debounce_MinTriggerDownCount = Prog_Mode_Debounce;
   }
  
   // don't attach this to the logic above with an else and waste a cycle
@@ -60,7 +60,7 @@ void programmingMode() {
         Prog_InitialLED = true;
       }
         
-      // DEBUG_PRINTLN("Main Programming Menu");
+      DEBUG_PRINTLN("Main Programming Menu");
       
       // NOTE: change this code to note when a NEW pull started (after the pull that turned on programming mode)
       // this will make it more like Tadao
@@ -99,7 +99,8 @@ void programmingMode() {
           
           // short blink
           ledOff();
-          // Note: add a delay here, then?
+          delay(250);
+          setLEDRegisterColor(Prog_CurrentRegister);
           
           DEBUG_PRINT("Changed to register ");DEBUG_PRINTLN(Prog_CurrentRegister);
         } else {
@@ -226,6 +227,9 @@ void programmingMode() {
         // and the solid light of the color when we go back to the main menu
         ledOff();
         delay(500);
+        
+        // reset LED color
+        setLEDRegisterColor(Prog_CurrentRegister);
       }
       
       // testing, reset to main
