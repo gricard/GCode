@@ -129,18 +129,16 @@ v0.7  - Clean up use of "TS" and "MS" in var names.
 
 TODO:
 
-For v0.7:
-      + Interrupt handling (timer interrupt + counter  (debounce))
-
 General:
+     + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
      + Add testing mode for debounce code that includes a register to change debounce schemes (sequential/delay)
-     + blink eyes when waiting for a trigger pull (like the Droid board)
+     + Blink eyes when waiting for a trigger pull (like the Droid board)
+     + OLED/LCD display support
      + dual solenoid support
      + dual eye logic / bolt tracking
+     + Interrupt handling (timer interrupt + counter  (debounce))
      + HES bolt position tracking
-     + LCD display support
      + Implement comment-based documentation generation, like doxygen
-     + Wrap all global var access in macros so we can switch between wrapper functions / direct access easily
 
 Not sure about:
      + shot queueing?
