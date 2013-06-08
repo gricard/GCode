@@ -60,7 +60,7 @@ void programmingMode() {
         Prog_InitialLED = true;
       }
         
-      DEBUG_PRINTLN("Main Programming Menu");
+      //DEBUG_PRINTLN("Main Programming Menu");
       
       // NOTE: change this code to note when a NEW pull started (after the pull that turned on programming mode)
       // this will make it more like Tadao
