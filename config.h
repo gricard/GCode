@@ -112,6 +112,8 @@ const byte LED_YELLOW[]    = { 255, 255, 0 };
 const byte LED_PURPLE[]    = { 150, 0, 150 };
 const byte LED_WHITE[]     = { 255, 255, 255 };
 const byte LED_TEAL[]      = {  0, 128, 128 };
+const byte LED_PINK[]      = {  255, 120, 185 };
+const byte LED_LIGHTBLUE[] = {  160, 208, 252 };
 const byte LED_BLACK[]     = {  0, 0, 0 };
 
 
