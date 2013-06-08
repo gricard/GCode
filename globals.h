@@ -58,7 +58,7 @@ byte Prog_Mode = PROG_MODE_MENU;
 byte Prog_CurrentRegister = REGISTER_DEBOUNCE;   // register we're currently programming, starts at 
 unsigned long Prog_RegisterTimeoutStart = 0;    // # of ms since we started waiting for input to program a register
 unsigned long Prog_TriggerDownStart = 0;
-byte Prog_Mode_Debounce = 3;
+byte Prog_Mode_Debounce = 8;
 bool Prog_WaitForTriggerRelease = false;
 bool Prog_InitialLED = false;
 
