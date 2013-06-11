@@ -31,28 +31,34 @@ need to separate firing logic into separate units:
 
 */
 
-
-void firingMode() {    
-
-  // need this to check for held trigger for turning eyes off
-  PriorTriggerState = TriggerState;
+void updateEyeState() {
+  byte priorEyeState = GET_EYE_READ_STATE();
   
-  TriggerState = getTriggerState();
-  
-  int priorEyeState = GET_EYE_READ_STATE();
   // NOTE: need to make constants for the results of this so it's more obvious, or change var name
-  SET_EYE_READ_STATE(getEyeState()); // 1 = no ball (can see beam), 0 = ball (can't see beam)
+  SET_EYE_READ_STATE(readEyeState()); // 1 = no ball (can see beam), 0 = ball (can't see beam)
   
   if( priorEyeState != GET_EYE_READ_STATE() ) {
-    DEBUG_PRINT("eye: " );DEBUG_PRINTLN(GET_EYE_READ_STATE());
+    DEBUG_PRINT("eye1: " );DEBUG_PRINTLN(GET_EYE_READ_STATE());
   }
   
   // clear blocked eye status
   // if eyes are turned on, and were previously blocked, and now we can see a ball
-  if( EYES_ON == Op_EyeStatus && Op_EyesBlocked && GET_EYE_READ_STATE() ) {
+  if( EYES_OFF != Op_EyeStatus && Op_EyesBlocked && GET_EYE_READ_STATE() ) { 
     Op_EyesBlocked = false;
+    setEyeStatus(EYES_ON);
     DEBUG_PRINTLN("   Eyes cleared");
   }
+}
+
+
+void firingMode() {    
+  bool ShotWasFired = false;
+
+  // need this to check for held trigger for turning eyes off
+  PriorTriggerState = TriggerState;
+  TriggerState = getTriggerState();
+  
+  updateEyeState();
   
   if( FIREMODE_AUTO == Conf_FireMode ) {
     if( TRIGGER_STATE_PULLED == TriggerState || TRIGGER_STATE_HELD == TriggerState ) {
@@ -64,8 +70,7 @@ void firingMode() {
   }
   else // semi-auto or ramp
   {
-    if( TRIGGER_STATE_HELD == TriggerState /*&& TriggerState != PriorTriggerState*/ ) {
-      // probably don't need the prior state stuff
+    if( TRIGGER_STATE_HELD == TriggerState ) {
       unsigned long ms = getTriggerDownMS();
     
       if( ms >= OP_EYES_OFF_TRIGGER_TIME ) {
@@ -73,6 +78,7 @@ void firingMode() {
         if( !Op_ManualEyeStateChange ) {
           if( EYES_ON == Op_EyeStatus ) {
             DEBUG_PRINTLN("   Eyes manually turned off");
+            ledOff();
             setEyeStatus(EYES_OFF);
             Op_ManualEyeStateChange = true;
           } else {
@@ -178,10 +184,14 @@ three more times, not five.
 
 
   if( Op_FireShot && EYES_ON == Op_EyeStatus && Op_EyesBlocked  ) {
-    DEBUG_PRINTLN("Cancel shot, eyes blocked");
+    DEBUG_PRINTLN("Eyes blocked");
     setEyeStatus(EYES_BLOCKED);
     DEBUG_PRINT("EYE STATUS: ");DEBUG_PRINTLN(Op_EyeStatus);
-    Op_FireShot = false;
+    
+    // do NOT cancel the shot for an eye block
+    // we automatically switch over to eyes off mode and lower the ROF anyway
+    // so just let the shot occur
+    //Op_FireShot = false;
   }
 
   // regular, unforced shot - check eyes
@@ -280,14 +290,25 @@ three more times, not five.
 
 
       // blink RGBLED for each shot
+      /*
       if( Op_EyesBlocked ) {
-        ledColor(EYES_OFF_LED_COLOR, 25);
+        ledColor(LED_EYES_BLOCKED, 25);
       } else {
-        ledColor(EYES_ON_LED_COLOR, 25);
+        ledColor(LED_EYES_ON, 25);
+      }
+      */
+      switch( Op_EyeStatus ) {
+        case EYES_ON: ledColor(LED_EYES_ON, 25); break;
+        case EYES_OFF: ledColor(LED_EYES_OFF, 25); break;
+        case EYES_BLOCKED: ledColor(LED_EYES_BLOCKED, 25); break;
+        default: ledColor(LED_WHITE, 25);
       }
 
       // and now actually fire the shot
       fireSolenoid(Op_Dwell);
+      
+      // mark this so that trigger release code doesn't turn off LED
+      ShotWasFired = true;
 
       // blink off
       ledOff();
@@ -312,7 +333,7 @@ three more times, not five.
     
     // shot is fired, trigger is let go, turn off the led
     // only do this on release, otherwise it prematurely cuts off operatingLEDBlink();
-    if( TRIGGER_STATE_RELEASED == TriggerState ) {
+    if( TRIGGER_STATE_RELEASED == TriggerState && !ShotWasFired && !Op_EyeBlinkSolid ) {
       ledOff();
     }
     

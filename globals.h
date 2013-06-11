@@ -104,6 +104,7 @@ byte OperatingMode = MODE_FIRING;
 byte EyeMode = EYES_ON; // Note: may not need this
 unsigned long LastEyeBlink = 0;
 bool LastEyeBlinkOn = false;
+bool Op_EyeBlinkSolid = LED_DISABLE_BLINKING;
 
 // operating variables
 byte Conf_Debounce;

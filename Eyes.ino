@@ -37,21 +37,35 @@ void eyesOff() {
   ledColor(EYES_OFF_LED_COLOR, LDB);
 }
 
-int getEyeState() {
+int readEyeState() {
   digitalRead(EYE_RX_PIN);
   return (digitalRead(EYE_RX_PIN) == HIGH);
 }
 
-void setEyeStatus(int state) {
-  if( EYES_ON == state ) {
-    Op_EyeStatus = EYES_ON;
-    eyesOn();
-  } else {
-    Op_EyeStatus = EYES_OFF;
-    eyesOff();
+void setEyeStatus(byte state) {
+  switch( state ) {
+    case EYES_ON:
+    DEBUG_PRINTLN("EYES_ON");
+      Op_EyeStatus = EYES_ON;
+      eyesOn();
+      break;
+      
+    case EYES_OFF:
+    DEBUG_PRINTLN("EYES_OFF");
+      // only disable TX eye if the eyes were turned off manually
+      eyesOff();
+      Op_EyeStatus = EYES_OFF; 
+      // make sure ROF cap is on when eyes are turned off
+      Op_UseROFCap = true;
+      break;
     
-    // make sure ROF cap is on when eyes are turned off
-    Op_UseROFCap = true;
+    default:
+    case EYES_BLOCKED:
+    DEBUG_PRINTLN("EYES_BLOCKED");
+      Op_EyeStatus = EYES_BLOCKED;
+      // make sure ROF cap is on when eyes are turned off
+      Op_UseROFCap = true;
+      break;
   }
 }
 

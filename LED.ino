@@ -102,13 +102,13 @@ void powerOnLEDBurst(byte mode) {
 }
 
 void operatingLEDBlink() {
+  byte eyeCheck;
   bool WaitingForTriggerInput = (TRIGGER_STATE_WAITING == TriggerState);
-  
   // wait at least 1 second between trigger pulls to activate
   bool NotActivelyShooting = (millis() > (Op_LastPullMS + 1000));
   
   if( LastEyeBlinkOn ) {
-    if( (operationTiming - LastEyeBlink) > BLINK_INTERVAL_ON ) {
+    if( !Op_EyeBlinkSolid && (operationTiming - LastEyeBlink) > BLINK_INTERVAL_ON ) {
       ledOff();
       LastEyeBlinkOn = false;
       LastEyeBlink = operationTiming;
@@ -116,18 +116,29 @@ void operatingLEDBlink() {
   } else {
     bool ItsTimeToBlink = ((operationTiming - LastEyeBlink) > BLINK_INTERVAL_OFF);
     
+    if( Op_EyeBlinkSolid ) ItsTimeToBlink = true;
+    
     // always wait until we're in a state where the gun is not shooting in order
     // to perform this blinking since the LED is in use by the firing mode
     if( WaitingForTriggerInput && NotActivelyShooting && ItsTimeToBlink ) {
-      switch( EyeMode ) {
-        case EYES_ON: ledColor(LED_EYES_ON, BLINK_BRIGHTNESS); break;
+      switch( Op_EyeStatus ) {
+        case EYES_ON: 
+          // display one color if we see a ball and another if we don't
+          eyeCheck = GET_EYE_READ_STATE();
+          if( eyeCheck ) ledColor(LED_EYES_ON_BALL, BLINK_BRIGHTNESS); 
+          else ledColor(LED_EYES_ON_EMPTY, BLINK_BRIGHTNESS); 
+          break;
+          
         case EYES_OFF: ledColor(LED_EYES_OFF, BLINK_BRIGHTNESS); break;
+        
+        default:
         case EYES_BLOCKED: ledColor(LED_EYES_BLOCKED, BLINK_BRIGHTNESS); break;
-        default: ledColor(LED_PURPLE, BLINK_BRIGHTNESS);
       }
       
-      LastEyeBlinkOn = true;
-      LastEyeBlink = operationTiming;
+      if( !Op_EyeBlinkSolid ) {
+        LastEyeBlinkOn = true;
+        LastEyeBlink = operationTiming;
+      }
     }
   }
 }

@@ -90,12 +90,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 //-- LED Configuration ------------------------------------------------------------
-#define LED_EYES_ON            LED_BLUE
-#define LED_EYES_OFF           LED_RED
-#define LED_EYES_BLOCKED       LED_YELLOW
+#define LED_EYES_ON            LED_GREEN
+#define LED_EYES_ON_BALL       LED_GREEN
+#define LED_EYES_ON_EMPTY      LED_RED
+#define LED_EYES_OFF           LED_ORANGE
+#define LED_EYES_BLOCKED       LED_PURPLE
 
 #define LED_DEFAULT_BRIGHTNESS       50
 #define LDB                          LED_DEFAULT_BRIGHTNESS
+
+// turn off LED blinking in firing mode
+#define LED_DISABLE_BLINKING false
 
 // these control the blinking of the RGB LED to indicate operational status
 #define BLINK_INTERVAL_ON       100
@@ -128,8 +133,8 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 // These should not be changed at all
 
 //// Eyes
-#define EYES_ON                   1
 #define EYES_OFF                  0
+#define EYES_ON                   1
 #define EYES_BLOCKED              2
 
 //// Trigger
@@ -163,7 +168,7 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 // uncomment the line below if you want to allow the user to 
 // configure the ROF for when the eyes are off
 // Note: be sure you have a reasonable value set for 
-//#define ALLOW_CONFIGURABLE_EYES_OFF_ROF
+//#define ALLOW_CONFIGURABLE_EYES_OFF_ROF true
 
 // Total # of registers we're using
 // Make sure this is updated if new programming registers are added!
