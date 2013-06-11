@@ -31,7 +31,13 @@ need to separate firing logic into separate units:
 
 */
 
-void updateEyeState() {
+void FM_UpdateTriggerState() {
+  // need this to check for held trigger for turning eyes off
+  PriorTriggerState = TriggerState;
+  TriggerState = getTriggerState();
+}
+
+void FM_UpdateEyeState() {
   byte priorEyeState = GET_EYE_READ_STATE();
   
   // NOTE: need to make constants for the results of this so it's more obvious, or change var name
@@ -50,16 +56,7 @@ void updateEyeState() {
   }
 }
 
-
-void firingMode() {    
-  bool ShotWasFired = false;
-
-  // need this to check for held trigger for turning eyes off
-  PriorTriggerState = TriggerState;
-  TriggerState = getTriggerState();
-  
-  updateEyeState();
-  
+void FM_HandleFireMode() {
   if( FIREMODE_AUTO == Conf_FireMode ) {
     if( TRIGGER_STATE_PULLED == TriggerState || TRIGGER_STATE_HELD == TriggerState ) {
       //pullCount++;
@@ -181,8 +178,9 @@ three more times, not five.
     }  // FIREMODE_RAMP
     
   } // fire mode
+}
 
-
+void FM_EyeCheck() {
   if( Op_FireShot && EYES_ON == Op_EyeStatus && Op_EyesBlocked  ) {
     DEBUG_PRINTLN("Eyes blocked");
     setEyeStatus(EYES_BLOCKED);
@@ -204,7 +202,11 @@ three more times, not five.
       Op_FireShot = true;
     }
   }
+}
 
+bool FM_ProcessShot() {
+  bool ShotWasFired = false;
+  
   // a shot has been requested
   if( Op_FireShot || Op_ForceShot ) {
     // "Take the shot" - M
@@ -327,7 +329,11 @@ three more times, not five.
       Op_ShotWasForced = true;
     }
   }
+  
+  return ShotWasFired;
+}
 
+void FM_PostShotProcess(bool ShotWasFired) {
   // when trigger is let go, reset a few things
   if( TRIGGER_STATE_RELEASED == TriggerState || TRIGGER_STATE_WAITING == TriggerState ) {
     
@@ -345,6 +351,20 @@ three more times, not five.
   // bottom of the loop, update generic timer
   // do this here since we don't know how much time we spent in this loop
   operationTiming = millis();
+}
+
+void firingMode() {    
+  FM_UpdateTriggerState();
+  
+  FM_UpdateEyeState();
+  
+  FM_HandleFireMode();
+
+  FM_EyeCheck();
+
+  bool ShotFired = FM_ProcessShot();
+
+  FM_PostShotProcess(ShotFired);
 }
 
 void fireSolenoid(int dwell) {

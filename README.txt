@@ -146,11 +146,11 @@ v0.8  - Enabled ROF eyes off programming
       - Fixed bug where eyes would not be turned back on when a block was cleared
       - Fixed code that updates LED color to indicate eye state
       - Added ability to configure whether LED blinks or not in firing mode
-
+      - Split up firingMode() code into sub-units
+      
 TODO:
 
 General:
-     + Split up firingMode() code into sub-units
      + Add event hooks to code (eye state change, trigger state change, shot firing, etc.)
           + Move things like LED changes into these hooks
           + Eventually these will also be used to update the LCD/OLED as well
