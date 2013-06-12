@@ -54,21 +54,25 @@ void ledOff() {
 }
 
 
-void setLEDRegisterColor(int regNum) {
+void setLEDRegisterColor(int regNum, byte colorNum) {
   byte brightness = 25;
   switch( regNum ) {
-    case REGISTER_DEBOUNCE:      ledColor(LED_GREEN, brightness); break;
-    case REGISTER_DWELL:         ledColor(LED_PURPLE, brightness); break;
-    case REGISTER_LOADER_DELAY:  ledColor(LED_YELLOW, brightness); break;
-    case REGISTER_MECH_DEBOUNCE: ledColor(LED_BLUE, brightness); break;
-    case REGISTER_FSDO_DWELL:    ledColor(LED_RED, brightness); break;
-    case REGISTER_FIRE_MODE:     ledColor(LED_WHITE, brightness); break;
-    case REGISTER_ROF_ON_INT:    ledColor(LED_TEAL, brightness); break;
-    case REGISTER_ROF_ON_FRAC:   ledColor(LED_ORANGE, brightness); break;
-    case REGISTER_ROF_OFF_INT:   ledColor(LED_PINK, brightness); break;
-    case REGISTER_ROF_OFF_FRAC:  ledColor(LED_LIGHTBLUE, brightness); break;
+    case REGISTER_DEBOUNCE:            ledColor(colorNum == 1 ? REGISTER_1_COLOR_1 : REGISTER_1_COLOR_2, brightness); break;
+    case REGISTER_DWELL:               ledColor(colorNum == 1 ? REGISTER_2_COLOR_1 : REGISTER_2_COLOR_2, brightness); break;
+    case REGISTER_LOADER_DELAY:        ledColor(colorNum == 1 ? REGISTER_3_COLOR_1 : REGISTER_3_COLOR_2, brightness); break;
+    case REGISTER_MECH_DEBOUNCE:       ledColor(colorNum == 1 ? REGISTER_4_COLOR_1 : REGISTER_4_COLOR_2, brightness); break;
+    case REGISTER_FSDO_DWELL:          ledColor(colorNum == 1 ? REGISTER_5_COLOR_1 : REGISTER_5_COLOR_2, brightness); break;
+    case REGISTER_FIRE_MODE:           ledColor(colorNum == 1 ? REGISTER_6_COLOR_1 : REGISTER_6_COLOR_2, brightness); break;
+    case REGISTER_ROF_ON_INT:          ledColor(colorNum == 1 ? REGISTER_7_COLOR_1 : REGISTER_7_COLOR_2, brightness); break;
+    case REGISTER_ROF_ON_FRAC:         ledColor(colorNum == 1 ? REGISTER_8_COLOR_1 : REGISTER_8_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_DWELL:        ledColor(colorNum == 1 ? REGISTER_9_COLOR_1 : REGISTER_9_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_EYE_DELAY:    ledColor(colorNum == 1 ? REGISTER_10_COLOR_1 : REGISTER_10_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_BOLT_DELAY:   ledColor(colorNum == 1 ? REGISTER_11_COLOR_1 : REGISTER_11_COLOR_2, brightness); break;
+    
+    case REGISTER_ROF_OFF_INT:         ledColor(colorNum == 1 ? REGISTER_12_COLOR_1 : REGISTER_12_COLOR_2, brightness); break;
+    case REGISTER_ROF_OFF_FRAC:        ledColor(colorNum == 1 ? REGISTER_13_COLOR_1 : REGISTER_13_COLOR_2, brightness); break;
 
-    default:                     ledColor(LED_WHITE, brightness);
+    default:                           ledColor(LED_WHITE, brightness);
   }
 }
 
@@ -98,6 +102,16 @@ void powerOnLEDBurst(byte mode) {
         delay(50);
       }
       break;
+  }
+}
+
+void resetProgrammingLEDBurst() {
+  for(int c = 0; c < 10; c++ ) {
+    if( c % 2 ) ledColor(LED_PURPLE, LDB);
+    else ledColor(LED_ORANGE, LDB);
+    delay(50);
+    ledOff();
+    delay(50);
   }
 }
 

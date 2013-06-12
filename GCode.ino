@@ -65,6 +65,13 @@ void setup() {
     OperatingMode = MODE_FIRING;
   }
 
+  // reset programming if program version was updated
+  byte programVersion = EEPROM.read(REGISTER_VERSION);
+
+  if( programVersion != PROGRAM_VERSION ) {
+    resetProgrammingToDefault();
+  }
+
   // read in programming register items
   Conf_Debounce = EEPROM.read(REGISTER_DEBOUNCE);
   Conf_Dwell = EEPROM.read(REGISTER_DWELL);
@@ -161,6 +168,11 @@ void setup() {
   
   // do a little power on color burst like Tadao board does
   powerOnLEDBurst(OperatingMode);
+  
+  if( OperatingMode = MODE_PROGRAMMING ) {
+    // track pull time so we can reset the board if held for a certain length of time
+    Prog_TriggerDownStart = millis();
+  }
 }
 
 
@@ -181,17 +193,22 @@ void loop(){
 /****************************************** Misc. Functions ************************************/
 byte getMaxRegisterValue(int regNum) {
   switch( regNum ) {
-    case REGISTER_DEBOUNCE:      return REGISTER_DEBOUNCE_MAX;
-    case REGISTER_DWELL:         return REGISTER_DWELL_MAX;
-    case REGISTER_LOADER_DELAY:  return REGISTER_LOADER_DELAY_MAX;
-    case REGISTER_MECH_DEBOUNCE: return REGISTER_MECH_DEBOUNCE_MAX;
-    case REGISTER_FSDO_DWELL:    return REGISTER_FSDO_DWELL_MAX;
-    case REGISTER_FIRE_MODE:     return REGISTER_FIRE_MODE_MAX;
+    case REGISTER_DEBOUNCE:            return REGISTER_DEBOUNCE_MAX;
+    case REGISTER_DWELL:               return REGISTER_DWELL_MAX;
+    case REGISTER_LOADER_DELAY:        return REGISTER_LOADER_DELAY_MAX;
+    case REGISTER_MECH_DEBOUNCE:       return REGISTER_MECH_DEBOUNCE_MAX;
+    case REGISTER_FSDO_DWELL:          return REGISTER_FSDO_DWELL_MAX;
+    case REGISTER_FIRE_MODE:           return REGISTER_FIRE_MODE_MAX;
     
-    case REGISTER_ROF_ON_INT:    return REGISTER_ROF_ON_INT_MAX;
-    case REGISTER_ROF_ON_FRAC:   return REGISTER_ROF_ON_FRAC_MAX;
-    case REGISTER_ROF_OFF_INT:   return REGISTER_ROF_OFF_INT_MAX;
-    case REGISTER_ROF_OFF_FRAC:  return REGISTER_ROF_OFF_FRAC_MAX;
+    case REGISTER_CLOSED_DWELL:        return REGISTER_CLOSED_DWELL_MAX;
+    case REGISTER_CLOSED_EYE_DELAY:    return REGISTER_CLOSED_EYE_DELAY_MAX;
+    case REGISTER_CLOSED_BOLT_DELAY:   return REGISTER_CLOSED_BOLT_DELAY_MAX;
+
+    
+    case REGISTER_ROF_ON_INT:          return REGISTER_ROF_ON_INT_MAX;
+    case REGISTER_ROF_ON_FRAC:         return REGISTER_ROF_ON_FRAC_MAX;
+    case REGISTER_ROF_OFF_INT:         return REGISTER_ROF_OFF_INT_MAX;
+    case REGISTER_ROF_OFF_FRAC:        return REGISTER_ROF_OFF_FRAC_MAX;
     default: 
       DEBUG_PRINT("ERROR: getMaxRegisterValue(): unrecognized register: ");
       DEBUG_PRINTLN(regNum);
@@ -218,7 +235,6 @@ float convertROFValueOld(byte ROF) {
 }
 
 float convertROFValue(byte rofInt, byte rofFrac) {
-
   if( rofInt > 1 ) {
     float rof = rofInt;
     

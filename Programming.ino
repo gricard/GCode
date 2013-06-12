@@ -29,11 +29,33 @@ void programmingMode() {
   // initial setup for programming mode
   if( Prog_WaitForTriggerRelease ) {
     TriggerState = getTriggerState();
+    unsigned long now = millis();
     
     if( TRIGGER_STATE_RELEASED == TriggerState ||  TRIGGER_STATE_WAITING == TriggerState ) {
+      if( now >= (Prog_TriggerDownStart + PROG_RESET_HOLD_TIME) ) {
+        resetProgrammingToDefault();
+        Prog_TriggerDownStart = 0;
+      }
+      
       Prog_WaitForTriggerRelease = false;
       DEBUG_PRINTLN("Trigger released, Entering programming mode...");
+    } else {
+      if( now >= (Prog_TriggerDownStart + PROG_RESET_HOLD_TIME) ) {
+        if( Prog_ResetWarningBlinkMS <= (now - PROG_RESET_WARNING_BLINK_TIME) ) {
+          if( Prog_ResetWarningLastState ) {
+            ledColor(LED_RED, LDB);
+            Prog_ResetWarningLastState = 0;
+          } else {
+            ledOff();
+            Prog_ResetWarningLastState = 1;
+          }
+          
+          Prog_ResetWarningBlinkMS = now;
+        }
+      }
     }
+      
+      
     
     Prog_Mode = PROG_MODE_MENU;
     Prog_TriggerDownStart = 0;
@@ -56,12 +78,10 @@ void programmingMode() {
     if( PROG_MODE_MENU == Prog_Mode ) {
       // only do this once
       if( !Prog_InitialLED ) {
-        setLEDRegisterColor(Prog_CurrentRegister);
+        setLEDRegisterColor(Prog_CurrentRegister, 1);
         Prog_InitialLED = true;
       }
-        
-      //DEBUG_PRINTLN("Main Programming Menu");
-      
+
       // NOTE: change this code to note when a NEW pull started (after the pull that turned on programming mode)
       // this will make it more like Tadao
       
@@ -95,12 +115,14 @@ void programmingMode() {
         if( pullLength < 1000 ) { 
           // move to next register
           Prog_CurrentRegister++;
-          if( Prog_CurrentRegister >= REGISTER_COUNT ) Prog_CurrentRegister = REGISTER_DEBOUNCE;
+          if( Prog_CurrentRegister >= REGISTER_COUNT ) Prog_CurrentRegister = FIRST_REGISTER;
           
           // short blink
           ledOff();
           delay(250);
-          setLEDRegisterColor(Prog_CurrentRegister);
+          setLEDRegisterColor(Prog_CurrentRegister, 1);
+          delay(100);
+          setLEDRegisterColor(Prog_CurrentRegister, 2);
           
           DEBUG_PRINT("Changed to register ");DEBUG_PRINTLN(Prog_CurrentRegister);
         } else {
@@ -111,7 +133,14 @@ void programmingMode() {
       }
       else
       {
-        // nothing here
+        // still in the main menu, no input
+        // alternate led colors
+        unsigned long now = millis();
+        if( Prog_LastLEDBlinkMS <= (now - 200) ) {
+          Prog_LastLEDBlinkColor = (Prog_LastLEDBlinkColor == 2 ? 1 : 2);
+          setLEDRegisterColor(Prog_CurrentRegister, Prog_LastLEDBlinkColor);
+          Prog_LastLEDBlinkMS = now;
+        }
       }
       
     } else {
@@ -127,7 +156,7 @@ void programmingMode() {
       // read in current value
       byte registerValue = EEPROM.read(Prog_CurrentRegister);
       
-      // NOTE: temp cheat since some unset registers read 255
+      // NOTE: limit value just in case, since some unset registers read 255
       if( registerValue > 100 ) registerValue = 10;
       
       DEBUG_PRINT("Register ");
@@ -136,12 +165,13 @@ void programmingMode() {
       DEBUG_PRINTLN(registerValue);
       
       // output current value to user
-      for(int i = 0; i < registerValue; i++ ) {
+      progOutputRegisterValue(registerValue, Prog_CurrentRegister);
+      /*for(int i = 0; i < registerValue; i++ ) {
         ledOff();
         delay(200);
         setLEDRegisterColor(Prog_CurrentRegister);
         delay(200);
-      }
+      }*/
       
       ledOff();
       
@@ -182,7 +212,9 @@ void programmingMode() {
               progOutputRegisterValue(newValue, Prog_CurrentRegister);
             } else {
               // blink once
-              setLEDRegisterColor(Prog_CurrentRegister);
+              setLEDRegisterColor(Prog_CurrentRegister, 1);
+              delay(100);
+              setLEDRegisterColor(Prog_CurrentRegister, 2);
               delay(250);
               ledOff();
             }
@@ -212,8 +244,7 @@ void programmingMode() {
       } else {
         // save
         registerValue = newValue;
-        EEPROM.write(Prog_CurrentRegister, registerValue);
-        DEBUG_PRINT("Set new value for register "); DEBUG_PRINT(Prog_CurrentRegister); DEBUG_PRINT(" to "); DEBUG_PRINTLN(registerValue);
+        setRegister(Prog_CurrentRegister, registerValue);
       }
       
       // Note: this should be a #define item in config.h
@@ -229,7 +260,9 @@ void programmingMode() {
         delay(500);
         
         // reset LED color
-        setLEDRegisterColor(Prog_CurrentRegister);
+        setLEDRegisterColor(Prog_CurrentRegister, 1);
+        delay(100);
+        setLEDRegisterColor(Prog_CurrentRegister, 2);
       }
       
       // testing, reset to main
@@ -242,8 +275,37 @@ void programmingMode() {
 void progOutputRegisterValue(byte value, int registerNum) {
   for(int i = 0; i < value; i++ ) {
     ledOff();
-    delay(200);
-    setLEDRegisterColor(registerNum);
-    delay(200);
+    delay(100);
+    setLEDRegisterColor(registerNum, 1);
+    delay(100);
+    //setLEDRegisterColor(registerNum, 2);
+    delay(100);
   }
+}
+
+void setRegister(byte reg, byte val) {
+  EEPROM.write(reg, val);
+  DEBUG_PRINT("Set new value for register "); DEBUG_PRINT(reg); DEBUG_PRINT(" to "); DEBUG_PRINTLN(val);
+}
+
+void resetProgrammingToDefault() {
+  setRegister(REGISTER_VERSION,              PROGRAM_VERSION);
+  
+  setRegister(REGISTER_DEBOUNCE,             DEFAULT_DEBOUNCE);
+  setRegister(REGISTER_DWELL,                DEFAULT_DWELL);
+  setRegister(REGISTER_LOADER_DELAY,         DEFAULT_LOADER_DELAY);
+  setRegister(REGISTER_MECH_DEBOUNCE,        DEFAULT_MECH_DEBOUNCE);
+  setRegister(REGISTER_FSDO_DWELL,           DEFAULT_FSDO_DWELL);
+  setRegister(REGISTER_FIRE_MODE,            DEFAULT_FIRE_MODE);
+  setRegister(REGISTER_ROF_ON_INT,           DEFAULT_ROF_EYES_ON_INT);
+  setRegister(REGISTER_ROF_ON_FRAC,          DEFAULT_ROF_EYES_ON_INT);
+  setRegister(REGISTER_CLOSED_DWELL,         DEFAULT_CLOSED_DWELL);
+  setRegister(REGISTER_CLOSED_EYE_DELAY,     DEFAULT_CLOSED_EYE_DELAY);
+  setRegister(REGISTER_CLOSED_BOLT_DELAY,    DEFAULT_CLOSED_BOLT_DELAY);
+  
+  setRegister(REGISTER_ROF_OFF_INT,          DEFAULT_ROF_EYES_OFF_INT);
+  setRegister(REGISTER_ROF_OFF_FRAC,         DEFAULT_ROF_EYES_OFF_FRAC);
+  
+  resetProgrammingLEDBurst();
+  DEBUG_PRINTLN("Programming registers reset");
 }

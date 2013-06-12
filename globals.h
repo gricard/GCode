@@ -55,12 +55,16 @@ byte TriggerState = 0;
 #define PROG_MODE_REGISTER 1
 #define PROG_TRIGGER_TIMEOUT 3000               // when programming a register, timeout after 3 seconds 
 byte Prog_Mode = PROG_MODE_MENU; 
-byte Prog_CurrentRegister = REGISTER_DEBOUNCE;   // register we're currently programming, starts at 
+byte Prog_CurrentRegister = FIRST_REGISTER;   // register we're currently programming, starts at 
 unsigned long Prog_RegisterTimeoutStart = 0;    // # of ms since we started waiting for input to program a register
 unsigned long Prog_TriggerDownStart = 0;
 byte Prog_Mode_Debounce = 8;
 bool Prog_WaitForTriggerRelease = false;
 bool Prog_InitialLED = false;
+byte Prog_LastLEDBlinkColor = 0;
+unsigned long Prog_LastLEDBlinkMS = 0;
+unsigned long Prog_ResetWarningBlinkMS = 0;
+byte Prog_ResetWarningLastState = 0;
 
 
 //// Operating mode

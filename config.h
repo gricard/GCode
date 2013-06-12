@@ -48,18 +48,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEFAULT_ROF_EYES_ON_FRAC       0 // no cap
 #define DEFAULT_ROF_EYES_OFF_INT       8 // 8.0bps, integral part of rof cap
 #define DEFAULT_ROF_EYES_OFF_FRAC      1 // 8.0bps, fractional part of rof cap (values start at 1 = 0.0, 2 = 0.1, etc.)
+#define DEFAULT_CLOSED_DWELL           5 // 5ms 
+#define DEFAULT_CLOSED_EYE_DELAY       8 // 160ms
+#define DEFAULT_CLOSED_BOLT_DELAY      25 // 25ms
+
 
 // Register max values
-#define REGISTER_DEBOUNCE_MAX          10
-#define REGISTER_DWELL_MAX             30
-#define REGISTER_LOADER_DELAY_MAX      10
-#define REGISTER_MECH_DEBOUNCE_MAX     10
-#define REGISTER_FSDO_DWELL_MAX        5
-#define REGISTER_FIRE_MODE_MAX         3 // Note: change this when you add new modes
-#define REGISTER_ROF_ON_INT_MAX        25 // integral part of rof cap
-#define REGISTER_ROF_ON_FRAC_MAX       10 // value - 1 = fraction (FRACtion of 10 = .9 , FRAC of 1 = .0)
-#define REGISTER_ROF_OFF_INT_MAX       12
-#define REGISTER_ROF_OFF_FRAC_MAX      10
+#define REGISTER_DEBOUNCE_MAX            10
+#define REGISTER_DWELL_MAX               30
+#define REGISTER_LOADER_DELAY_MAX        10
+#define REGISTER_MECH_DEBOUNCE_MAX       10
+#define REGISTER_FSDO_DWELL_MAX          5
+#define REGISTER_FIRE_MODE_MAX           3 // Note: change this when you add new modes
+#define REGISTER_ROF_ON_INT_MAX          25 // integral part of rof cap
+#define REGISTER_ROF_ON_FRAC_MAX         10 // value - 1 = fraction (FRACtion of 10 = .9 , FRAC of 1 = .0)
+#define REGISTER_CLOSED_DWELL_MAX        20 // temp value
+#define REGISTER_CLOSED_EYE_DELAY_MAX    20 // temp value
+#define REGISTER_CLOSED_BOLT_DELAY_MAX   20 // temp value
+#define REGISTER_ROF_OFF_INT_MAX         12
+#define REGISTER_ROF_OFF_FRAC_MAX        10
 
 
 //-- Rate of Fire Limiting Configuration --------------------------------------------------
@@ -128,6 +135,10 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define TRIGGER_OPEN       HIGH
 
 
+//-- Programming Configuration ------------------------------------------------------------
+#define PROG_RESET_HOLD_TIME 10000 // hold trigger additional 10 seconds to reset board
+#define PROG_RESET_WARNING_BLINK_TIME 200 // how many ms per blink
+
 
 // -------- CONSTANTS ---------------------------------------------------------------------
 // These should not be changed at all
@@ -153,29 +164,85 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define MODE_PROGRAMMING          0
 #define MODE_FIRING               1
 
+// Program Version
+#define PROGRAM_VERSION               8
+
 // EEPROM register numbers
-#define REGISTER_DEBOUNCE         0
-#define REGISTER_DWELL            1
-#define REGISTER_LOADER_DELAY     2
-#define REGISTER_MECH_DEBOUNCE    3
-#define REGISTER_FSDO_DWELL       4
-#define REGISTER_FIRE_MODE        5
-#define REGISTER_ROF_ON_INT       6
-#define REGISTER_ROF_ON_FRAC      7
-#define REGISTER_ROF_OFF_INT      8
-#define REGISTER_ROF_OFF_FRAC     9
+#define REGISTER_VERSION              0  // not a programmed register, used to store program version
+
+#define REGISTER_DEBOUNCE             1
+#define REGISTER_DWELL                2
+#define REGISTER_LOADER_DELAY         3
+#define REGISTER_MECH_DEBOUNCE        4
+#define REGISTER_FSDO_DWELL           5
+#define REGISTER_FIRE_MODE            6
+#define REGISTER_ROF_ON_INT           7
+#define REGISTER_ROF_ON_FRAC          8
+#define REGISTER_CLOSED_DWELL         9    // second solenoid dwell for closed bolt mode, set this to anything other than 1 to turn on close bolt mode (5ms)
+#define REGISTER_CLOSED_EYE_DELAY     10   // closed bolt eye delay - how long to wait for ball to enter breech (160ms, 20ms increments)
+#define REGISTER_CLOSED_BOLT_DELAY    11   // how long to wait for bolt to close before firing
+
+#define REGISTER_EYE_MODE
+#define REGISTER_BOLT_DELAY
+#define REGISTER_CPF
+#define REGISTER_BOARD_MODE 
+
+#define REGISTER_ROF_OFF_INT          12
+#define REGISTER_ROF_OFF_FRAC         13
+
+// explicitly set which register programming mode starts at
+#define FIRST_REGISTER                REGISTER_DEBOUNCE
+
+// new color scheme for programming registers
+// color 1 is first color displayed, color 2 is second color displayed
+// solid colors have same color 1 and color 2
+// blinking colors have color 1 set to color, and color 2 set to LED_OFF
+// alternating colors have differnt color 1 and color 2
+#define REGISTER_1_COLOR_1  LED_GREEN
+#define REGISTER_1_COLOR_2  LED_GREEN
+#define REGISTER_2_COLOR_1  LED_PURPLE
+#define REGISTER_2_COLOR_2  LED_PURPLE
+#define REGISTER_3_COLOR_1  LED_YELLOW
+#define REGISTER_3_COLOR_2  LED_YELLOW
+#define REGISTER_4_COLOR_1  LED_BLUE
+#define REGISTER_4_COLOR_2  LED_BLUE
+#define REGISTER_5_COLOR_1  LED_RED
+#define REGISTER_5_COLOR_2  LED_RED
+#define REGISTER_6_COLOR_1  LED_WHITE
+#define REGISTER_6_COLOR_2  LED_WHITE
+#define REGISTER_7_COLOR_1  LED_TEAL
+#define REGISTER_7_COLOR_2  LED_TEAL
+#define REGISTER_8_COLOR_1  LED_ORANGE
+#define REGISTER_8_COLOR_2  LED_ORANGE
+#define REGISTER_9_COLOR_1  LED_GREEN
+#define REGISTER_9_COLOR_2  LED_BLACK
+#define REGISTER_10_COLOR_1  LED_PURPLE
+#define REGISTER_10_COLOR_2  LED_BLACK
+#define REGISTER_11_COLOR_1  LED_YELLOW
+#define REGISTER_11_COLOR_2  LED_BLACK
+#define REGISTER_12_COLOR_1  LED_BLUE
+#define REGISTER_12_COLOR_2  LED_BLACK
+#define REGISTER_13_COLOR_1  LED_RED
+#define REGISTER_13_COLOR_2  LED_BLACK
+#define REGISTER_14_COLOR_1  LED_WHITE
+#define REGISTER_14_COLOR_2  LED_BLACK
+#define REGISTER_15_COLOR_1  LED_TEAL
+#define REGISTER_15_COLOR_2  LED_BLACK
+#define REGISTER_16_COLOR_1  LED_ORANGE
+#define REGISTER_16_COLOR_2  LED_BLACK
+
 
 // uncomment the line below if you want to allow the user to 
 // configure the ROF for when the eyes are off
 // Note: be sure you have a reasonable value set for 
-//#define ALLOW_CONFIGURABLE_EYES_OFF_ROF true
+#define ALLOW_CONFIGURABLE_EYES_OFF_ROF true
 
 // Total # of registers we're using
 // Make sure this is updated if new programming registers are added!
 #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
-#define REGISTER_COUNT            10
+#define REGISTER_COUNT                13
 #else
-#define REGISTER_COUNT            8
+#define REGISTER_COUNT                11
 #endif
 
 

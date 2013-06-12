@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBUG_TRIGGER_LOGIC true
 
 // comment out items below to turn them on
-#undef DEBUG_MODE
+//#undef DEBUG_MODE
 #undef DEBUG_TRIGGER_LOGIC
 
 #ifdef DEBUG_MODE

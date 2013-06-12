@@ -147,15 +147,32 @@ v0.8  - Enabled ROF eyes off programming
       - Fixed code that updates LED color to indicate eye state
       - Added ability to configure whether LED blinks or not in firing mode
       - Split up firingMode() code into sub-units
-      
+      - Board reset (hold trigger down to get into programming mode and keep holding it      
+        until light starts flashing red, then release to reset board)
+      - Change register 0 to store code version
+      - Reset all registers to default values if code version is old
+      - Added programming registers for closed bolt mode
+      - Added LED alternating/blinking color support for programming mode registers
+
 TODO:
 
 General:
+
+     + Weird bug in programming mode where it skips to the next register too quickly
+     + Shot queueing (allowed to have one shot queued)
+     + Debounce trigger release
+     + Dual solenoid support (closed bolt mode)
+     + Fix operationalLEDBlink() so that it doesn't delay when eyes are off/blocked, or 
+       there is no ball in the breech
+     + Fix ramping code to go by shots fired timing, not trigger pull timing
+        (you could have pulls with the eyes off that initiate ramp and it will fire in
+         ramp when a ball lands in the breech)
      + Add event hooks to code (eye state change, trigger state change, shot firing, etc.)
           + Move things like LED changes into these hooks
           + Eventually these will also be used to update the LCD/OLED as well
-     + Dual solenoid support (closed bolt mode)
      + OLED/LCD display support
+     + Stats collection
+     + Speaker + audio output support
      + Wrap all global var access in macros so we can switch between wrapper functions 
        / direct access easily
      + Add testing mode for debounce code that includes a register to change debounce 
@@ -169,7 +186,6 @@ General:
      + Implement comment-based documentation generation, like doxygen
 
 Not sure about:
-     + shot queueing
      + auto shut off (may not be possible with boards using an on/off switch)
      + FSDO reset time
      + Support for two pin multi color led like on the WAS Viking board
