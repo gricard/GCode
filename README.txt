@@ -136,6 +136,7 @@ v0.7  - Clean up use of "TS" and "MS" in var names.
       - Fix bug with LED staying solid color as ramp winds down
       - Fix bug with LED flashing when holding down trigger in main menu to select 
         register
+      - complete 6/7/13
 
 v0.8  - Enabled ROF eyes off programming
       - Fixed eye logic bug causing eyes to keep turning off
@@ -156,11 +157,7 @@ v0.8  - Enabled ROF eyes off programming
 
 TODO:
 
-General:
-
-     + Weird bug in programming mode where it skips to the next register too quickly
-     + Shot queueing (allowed to have one shot queued)
-     + Debounce trigger release
+For v0.9:
      + Dual solenoid support (closed bolt mode)
      + Fix operationalLEDBlink() so that it doesn't delay when eyes are off/blocked, or 
        there is no ball in the breech
@@ -170,6 +167,11 @@ General:
      + Add event hooks to code (eye state change, trigger state change, shot firing, etc.)
           + Move things like LED changes into these hooks
           + Eventually these will also be used to update the LCD/OLED as well
+     + Weird bug in programming mode where it skips to the next register too quickly
+
+General:
+     + Shot queueing (allowed to have one shot queued)
+     + Debounce trigger release
      + OLED/LCD display support
      + Stats collection
      + Speaker + audio output support
