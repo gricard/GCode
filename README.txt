@@ -1,4 +1,4 @@
-GCode v0.8
+GCode v0.9
 Board code for paintball guns
 Copyright (C) 2013 Gabriel Ricard
 
@@ -155,23 +155,29 @@ v0.8  - Enabled ROF eyes off programming
       - Added programming registers for closed bolt mode
       - Added LED alternating/blinking color support for programming mode registers
 
+v0.9
+      - Added blinking yellow warning light for board reset when trigger held > 5s 
+        at startup & made red reset commit light blink faster
+
 TODO:
 
 For v0.9:
-     + Dual solenoid support (closed bolt mode)
-     + Fix operationalLEDBlink() so that it doesn't delay when eyes are off/blocked, or 
-       there is no ball in the breech
-     + Fix ramping code to go by shots fired timing, not trigger pull timing
-        (you could have pulls with the eyes off that initiate ramp and it will fire in
-         ramp when a ball lands in the breech)
-     + Add event hooks to code (eye state change, trigger state change, shot firing, etc.)
-          + Move things like LED changes into these hooks
-          + Eventually these will also be used to update the LCD/OLED as well
-     + Weird bug in programming mode where it skips to the next register too quickly
+      + Dual solenoid support (closed bolt mode)
+      + Fix operationalLEDBlink() so that it doesn't delay when eyes are off/blocked, or 
+        there is no ball in the breech
+      + Fix ramping code to go by shots fired timing, not trigger pull timing
+         (you could have pulls with the eyes off that initiate ramp and it will fire in
+          ramp when a ball lands in the breech)
+      + Add event hooks to code (eye state change, trigger state change, shot firing, etc.)
+           + Move things like LED changes into these hooks
+           + Eventually these will also be used to update the LCD/OLED as well
+      + Weird bug in programming mode where it skips to the next register too quickly
+      + Re-enable eyes for full auto
+      + Add separate setting for ROF on/off (& remove "unlimited" setting from ROF caps)
 
 General:
-     + Shot queueing (allowed to have one shot queued)
      + Debounce trigger release
+     + Shot queueing (allowed to have one shot queued)
      + OLED/LCD display support
      + Stats collection
      + Speaker + audio output support
