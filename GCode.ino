@@ -169,7 +169,7 @@ void setup() {
   // do a little power on color burst like Tadao board does
   powerOnLEDBurst(OperatingMode);
   
-  if( OperatingMode = MODE_PROGRAMMING ) {
+  if( MODE_PROGRAMMING == OperatingMode ) {
     // track pull time so we can reset the board if held for a certain length of time
     Prog_TriggerDownStart = millis();
   }
