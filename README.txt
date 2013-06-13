@@ -158,11 +158,11 @@ v0.8  - Enabled ROF eyes off programming
 v0.9
       - Added blinking yellow warning light for board reset when trigger held > 5s 
         at startup & made red reset commit light blink faster
+      + Dual solenoid support (closed bolt mode)
 
 TODO:
 
 For v0.9:
-      + Dual solenoid support (closed bolt mode)
       + Fix operationalLEDBlink() so that it doesn't delay when eyes are off/blocked, or 
         there is no ball in the breech
       + Fix ramping code to go by shots fired timing, not trigger pull timing

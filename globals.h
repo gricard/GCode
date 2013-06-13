@@ -78,6 +78,7 @@ bool Op_ManualEyeStateChange = false;
 bool Op_FireShot = false;
 bool Op_ForceShot = false;
 bool Op_ShotWasForced = false;
+byte Op_GunMode = GUNMODE_OPEN; // default to open bolt mode
 
 bool Op_UseROFCap = true;
 unsigned long Op_LastShotMS = 0;
@@ -121,7 +122,9 @@ byte Conf_ROFEyesOnInt;
 byte Conf_ROFEyesOnFrac;
 byte Conf_ROFEyesOffInt;
 byte Conf_ROFEyesOffFrac;
-
+byte Conf_ClosedBoltDwell;
+byte Conf_ClosedBoltEyeDelay;
+byte Conf_ClosedBoltBoltDelay;
 
 
 byte Trigger_PinState = -1; // for the actual pin state (HIGH/LOW)

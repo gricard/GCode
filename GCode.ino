@@ -33,8 +33,9 @@ void setup() {
   Serial.begin(9600);
   #endif;
 
-  // initialize the LED pin as an output:
-  pinMode(SOLENOID_PIN, OUTPUT);  
+  // initialize the solenoid pin(s) as an output:
+  pinMode(SOLENOID_PIN, OUTPUT);
+  pinMode(SOLENOID2_PIN, OUTPUT);
   
   // initialize the pushbutton pin as an input:
   pinMode(TRIGGER_PIN, INPUT);
@@ -80,7 +81,10 @@ void setup() {
   Conf_FSDODwell = EEPROM.read(REGISTER_FSDO_DWELL);
   Conf_FireMode = EEPROM.read(REGISTER_FIRE_MODE);
   Conf_ROFEyesOnInt = EEPROM.read(REGISTER_ROF_ON_INT);  
-  Conf_ROFEyesOnFrac = EEPROM.read(REGISTER_ROF_ON_FRAC);  
+  Conf_ROFEyesOnFrac = EEPROM.read(REGISTER_ROF_ON_FRAC);
+  Conf_ClosedBoltDwell = EEPROM.read(REGISTER_CLOSED_DWELL);
+  Conf_ClosedBoltEyeDelay = EEPROM.read(REGISTER_CLOSED_EYE_DELAY);
+  Conf_ClosedBoltBoltDelay = EEPROM.read(REGISTER_CLOSED_BOLT_DELAY);
  
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   Conf_ROFEyesOffInt = EEPROM.read(REGISTER_ROF_OFF_INT);
@@ -102,6 +106,9 @@ void setup() {
   if( Conf_FireMode < 1 || Conf_FireMode > REGISTER_FIRE_MODE_MAX ) Conf_FireMode = DEFAULT_FIRE_MODE;
   if( Conf_ROFEyesOnInt < 1 || Conf_ROFEyesOnInt > REGISTER_ROF_ON_INT_MAX ) Conf_ROFEyesOnInt = DEFAULT_ROF_EYES_ON_INT;
   if( Conf_ROFEyesOnFrac < 1 || Conf_ROFEyesOnFrac > REGISTER_ROF_ON_FRAC_MAX ) Conf_ROFEyesOnFrac = DEFAULT_ROF_EYES_ON_FRAC;
+  if( Conf_ClosedBoltDwell < 1 || Conf_ClosedBoltDwell > REGISTER_CLOSED_DWELL_MAX ) Conf_ClosedBoltDwell = DEFAULT_CLOSED_DWELL;
+  if( Conf_ClosedBoltEyeDelay < 1 || Conf_ClosedBoltEyeDelay > REGISTER_CLOSED_EYE_DELAY_MAX ) Conf_ClosedBoltEyeDelay = DEFAULT_CLOSED_EYE_DELAY;
+  if( Conf_ClosedBoltBoltDelay < 1 || Conf_ClosedBoltBoltDelay > REGISTER_CLOSED_BOLT_DELAY_MAX ) Conf_ClosedBoltBoltDelay = DEFAULT_CLOSED_BOLT_DELAY;
   
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   if( Conf_ROFEyesOffInt < 1 || Conf_ROFEyesOffInt > REGISTER_ROF_OFF_INT_MAX ) Conf_ROFEyesOffInt = DEFAULT_ROF_EYES_OFF_INT;
@@ -119,7 +126,10 @@ void setup() {
   DEBUG_PRINT("   ROFEyesOnFrac=");DEBUG_PRINTLN(Conf_ROFEyesOnFrac);
   DEBUG_PRINT("   ROFEyesOffInt=");DEBUG_PRINTLN(Conf_ROFEyesOffInt);
   DEBUG_PRINT("   ROFEyesOffFrac=");DEBUG_PRINTLN(Conf_ROFEyesOffFrac);
-
+  DEBUG_PRINT("   Conf_ClosedBoltDwell=");DEBUG_PRINTLN(Conf_ClosedBoltDwell);
+  DEBUG_PRINT("   Conf_ClosedBoltEyeDelay=");DEBUG_PRINTLN(Conf_ClosedBoltEyeDelay);
+  DEBUG_PRINT("   Conf_ClosedBoltBoltDelay=");DEBUG_PRINTLN(Conf_ClosedBoltBoltDelay);
+  
   // Convert register values to usable program values
   // setting of 1 is 0ms, so subtract one from register value
   Conf_LoaderDelay -= 1;
@@ -131,7 +141,13 @@ void setup() {
   DEBUG_PRINT("Eyes on ROF = ");DEBUG_PRINT(Op_ROFEyesOn);DEBUG_PRINTLN("bps");
   Op_ROFEyesOff = convertROFValue(Conf_ROFEyesOffInt, Conf_ROFEyesOffFrac);
   DEBUG_PRINT("Eyes off ROF = ");DEBUG_PRINT(Op_ROFEyesOff);DEBUG_PRINTLN("bps");
-  
+
+  // If closed bolt dwell setting is set, change to closed bolt mode
+  if( Conf_ClosedBoltDwell > 1 ) {
+    Op_GunMode = GUNMODE_CLOSED;
+    DEBUG_PRINTLN("Closed bolt mode enabled");
+  }
+
   // set initial dwell
   // may be modified by FSDO dwell
   Op_Dwell = Conf_Dwell;
@@ -139,11 +155,6 @@ void setup() {
   // set debounce
   Debounce_MinTriggerDownCount = Conf_Debounce; // for sequential read debounce
   Debounce_DelayTime = Conf_Debounce; // for delay debounce
-  
-  // start off generic timer
-  operationTiming = millis();
-  LastEyeBlinkOn = false;
-  LastEyeBlink = operationTiming;
   
   // setup ROF cap
   Op_UseROFCap = (Op_ROFEyesOn > 1);
@@ -173,6 +184,12 @@ void setup() {
     // track pull time so we can reset the board if held for a certain length of time
     Prog_TriggerDownStart = millis();
   }
+  
+  // start off generic timer
+  // want this as close to start of main loop as possible
+  operationTiming = millis();
+  LastEyeBlinkOn = false;
+  LastEyeBlink = operationTiming;
 }
 
 

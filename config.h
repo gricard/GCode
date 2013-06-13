@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define EYE_TX_PIN            3
 #define EYE_RX_PIN            4
 #define SOLENOID_PIN          5
+#define SOLENOID2_PIN         6
 #define RGBLED_PIN_RED        9
 #define RGBLED_PIN_GREEN      10
 #define RGBLED_PIN_BLUE       11
@@ -38,8 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //-- Programming Register Configuration ---------------------------------------------------
 // Register default values
-#define DEFAULT_DEBOUNCE               3
-#define DEFAULT_DWELL                  8 // 8 sequential blinks, or 8ms 
+#define DEFAULT_DEBOUNCE               5
+#define DEFAULT_DWELL                  10 // 10 sequential blinks, or 10ms 
 #define DEFAULT_LOADER_DELAY           1 // off, 2 = 1ms
 #define DEFAULT_MECH_DEBOUNCE          1 // off, 2 = 1
 #define DEFAULT_FSDO_DWELL             1 // off , 2 = 1ms
@@ -48,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEFAULT_ROF_EYES_ON_FRAC       0 // no cap
 #define DEFAULT_ROF_EYES_OFF_INT       8 // 8.0bps, integral part of rof cap
 #define DEFAULT_ROF_EYES_OFF_FRAC      1 // 8.0bps, fractional part of rof cap (values start at 1 = 0.0, 2 = 0.1, etc.)
-#define DEFAULT_CLOSED_DWELL           5 // 5ms 
+#define DEFAULT_CLOSED_DWELL           1 // 1 = 0ff, 2=2ms, 3=3ms, etc.
 #define DEFAULT_CLOSED_EYE_DELAY       8 // 160ms
 #define DEFAULT_CLOSED_BOLT_DELAY      25 // 25ms
 
@@ -62,9 +63,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REGISTER_FIRE_MODE_MAX           3 // Note: change this when you add new modes
 #define REGISTER_ROF_ON_INT_MAX          25 // integral part of rof cap
 #define REGISTER_ROF_ON_FRAC_MAX         10 // value - 1 = fraction (FRACtion of 10 = .9 , FRAC of 1 = .0)
-#define REGISTER_CLOSED_DWELL_MAX        20 // temp value
-#define REGISTER_CLOSED_EYE_DELAY_MAX    20 // temp value
-#define REGISTER_CLOSED_BOLT_DELAY_MAX   20 // temp value
+#define REGISTER_CLOSED_DWELL_MAX        13 // 13ms
+#define REGISTER_CLOSED_EYE_DELAY_MAX    10 // 200ms max wait time
+#define REGISTER_CLOSED_BOLT_DELAY_MAX   35 // 35ms
 #define REGISTER_ROF_OFF_INT_MAX         12
 #define REGISTER_ROF_OFF_FRAC_MAX        10
 
@@ -93,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OP_FORCE_SHOT_TRIGGER_TIME       500
 #define EYES_ON_LED_COLOR                LED_RED
 #define EYES_OFF_LED_COLOR               LED_YELLOW
-// Note: these are duped! LED_EYES_ON = EYES_ON_LED_COLOR
+#define EYES_OFF_CLOSED_BOLT_DELAY       160 // 160ms delay waiting for a ball to drop in eyes off mode
 
 
 //-- LED Configuration ------------------------------------------------------------
@@ -162,9 +163,13 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define FIREMODE_AUTO             2
 #define FIREMODE_RAMP             3
 
+//// Gun modes
+#define GUNMODE_OPEN                  0 // cpen bolt
+#define GUNMODE_CLOSED                1 // closed bolt
+
 //// Operating Modes
-#define MODE_PROGRAMMING          0
-#define MODE_FIRING               1
+#define MODE_PROGRAMMING              0
+#define MODE_FIRING                   1
 
 // Program Version
 #define PROGRAM_VERSION               8

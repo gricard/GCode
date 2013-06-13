@@ -204,132 +204,165 @@ void FM_EyeCheck() {
   }
 }
 
+
+void loaderDelay() {
+  // loader delay
+  if( Conf_LoaderDelay > 0 ) {
+    delay(Conf_LoaderDelay); // setting of 1 is 0ms, so subtract one from register value
+    //DEBUG_PRINT("     Loader Delay MS= ");DEBUG_PRINTLN(Conf_LoaderDelay - 1);
+  }
+}
+
 bool FM_ProcessShot() {
   bool ShotWasFired = false;
   
-  // a shot has been requested
-  if( Op_FireShot || Op_ForceShot ) {
-    // "Take the shot" - M
-    bool takeTheShot = true;
-    
-    // figure out current rate of fire
-    int msBetweenShots = 0;
-    float curROFLimit = (EYES_ON == Op_EyeStatus ? Op_ROFEyesOn : Op_ROFEyesOff);
-    
-    // ROF limit of 1 is uncapped
-    if( curROFLimit > 1  ) {
-      msBetweenShots = 1000 / curROFLimit;
-    } else {
-      msBetweenShots = 0;
-    }
-    
-    unsigned long nextShotMinMS = Op_LastShotMS + msBetweenShots;
-    unsigned long ms = millis();
-    
-    // ROF delay
-    if( Op_UseROFCap && Op_LastShotMS > 0 ) {
-      // using rof cap, and we've already had the first shot go, so track timing and wait if needed  
-      if( ms < nextShotMinMS ) {
-        // it's too soon to take another shot
-        takeTheShot = false;
-      }
-      
-      //DEBUG_PRINT("ROF Limit=");DEBUG_PRINT(curROFLimit);
-      //DEBUG_PRINT(" ms=");DEBUG_PRINT(msBetweenShots);
-      //DEBUG_PRINT(" now=");DEBUG_PRINT(ms);
-      //DEBUG_PRINT(" next=");DEBUG_PRINT(nextShotMinMS);
-      //DEBUG_PRINT(" take=");DEBUG_PRINTLN(takeTheShot);
-    }
-    
-    if( !takeTheShot ) {
-      //DEBUG_PRINTLN("     ROF delay");
-      Op_LastShotTaken = false;
-    } else {
-      Op_LastShotTaken = true;
-      
-      // loader delay
-      if( Conf_LoaderDelay > 0 ) {
-        delay(Conf_LoaderDelay); // setting of 1 is 0ms, so subtract one from register value
-        //DEBUG_PRINT("     Loader Delay MS= ");DEBUG_PRINTLN(Conf_LoaderDelay - 1);
-      }
-        
-      // mech debounce
-      int fireRateOver8BPS = false;
-      int curROF = 0;
-      unsigned long timeSinceLastShot = 0;
-      
-      if( Op_LastShotMS > 0 ) {
-        timeSinceLastShot = ms - Op_LastShotMS;
-        curROF = 1000 / timeSinceLastShot;
-        fireRateOver8BPS = (curROF > 8);
-        DEBUG_PRINT("CurROF = ");DEBUG_PRINTLN(curROF);
-      } else {
-        curROF = 0;
-        fireRateOver8BPS = false;
-        DEBUG_PRINTLN("First Shot");
-      }
-      
-      // mech debounce method is based on the CodeX open source board software
-      // https://code.google.com/p/paintballcodex/
-      if( !fireRateOver8BPS && Conf_MechDebounce > 0 ) {
-        delay(Conf_MechDebounce);
-        //DEBUG_PRINT("     Mech Debounce MS= ");DEBUG_PRINTLN(Conf_MechDebounce - 1);
-      }
-        
-      // reset dwell to default
-      Op_Dwell = Conf_Dwell;
-        
-      // modify dwell on first shot for FSDO dwell
-      if( Op_FirstShot ) {
-        Op_FirstShot = false;
-          
-        // FSDO dwell
-        if( Conf_FSDODwell > 0 ) {
-          //DEBUG_PRINT("     FSDO Dwell MS= ");DEBUG_PRINTLN(Conf_FSDODwell - 1);
-          Op_Dwell += (Conf_FSDODwell);
-        }
-      }
-
-
-      // blink RGBLED for each shot
-      /*
-      if( Op_EyesBlocked ) {
-        ledColor(LED_EYES_BLOCKED, 25);
-      } else {
-        ledColor(LED_EYES_ON, 25);
-      }
-      */
-      switch( Op_EyeStatus ) {
-        case EYES_ON: ledColor(LED_EYES_ON, 25); break;
-        case EYES_OFF: ledColor(LED_EYES_OFF, 25); break;
-        case EYES_BLOCKED: ledColor(LED_EYES_BLOCKED, 25); break;
-        default: ledColor(LED_WHITE, 25);
-      }
-
-      // and now actually fire the shot
-      fireSolenoid(Op_Dwell);
-      
-      // mark this so that trigger release code doesn't turn off LED
-      ShotWasFired = true;
-
-      // blink off
-      ledOff();
-      
-      // track when the last shot occurred
-      Op_LastShotMS = millis();
-        
-      // set this after the shot, then after it goes back through the loop and the eye code updates they'll be unblocked
-      Op_EyesBlocked = true;
-      
-      // reset this
-      Op_FireShot = false;
-      Op_ForceShot = false;
-      
-      // set this to true so it will be reset to false by the code that checks for trigger release
-      Op_ShotWasForced = true;
-    }
+  if( !Op_FireShot && !Op_ForceShot ) {
+    return false;
   }
   
+  // a shot has been requested
+      
+  // "Take the shot" - M
+  bool takeTheShot = true;
+    
+  // figure out current rate of fire
+  int msBetweenShots = 0;
+  float curROFLimit = (EYES_ON == Op_EyeStatus ? Op_ROFEyesOn : Op_ROFEyesOff);
+  
+  // ROF limit of 1 is uncapped
+  if( curROFLimit > 1  ) {
+    msBetweenShots = 1000 / curROFLimit;
+  } else {
+    msBetweenShots = 0;
+  }
+  
+  unsigned long nextShotMinMS = Op_LastShotMS + msBetweenShots;
+  unsigned long ms = millis();
+  
+  // ROF delay
+  if( Op_UseROFCap && Op_LastShotMS > 0 ) {
+    // using rof cap, and we've already had the first shot go, so track timing and wait if needed  
+    if( ms < nextShotMinMS ) {
+      // it's too soon to take another shot
+      takeTheShot = false;
+    }
+    
+    //DEBUG_PRINT("ROF Limit=");DEBUG_PRINT(curROFLimit);
+    //DEBUG_PRINT(" ms=");DEBUG_PRINT(msBetweenShots);
+    //DEBUG_PRINT(" now=");DEBUG_PRINT(ms);
+    //DEBUG_PRINT(" next=");DEBUG_PRINT(nextShotMinMS);
+    //DEBUG_PRINT(" take=");DEBUG_PRINTLN(takeTheShot);
+  }
+  
+  if( !takeTheShot ) {
+    //DEBUG_PRINTLN("     ROF delay");
+    Op_LastShotTaken = false;
+    return false;
+  }
+
+  if( GUNMODE_OPEN == Op_GunMode ) {
+    loaderDelay();
+  }
+  
+  //// Fire a shot
+  // mech debounce
+  int fireRateOver8BPS = false;
+  int curROF = 0;
+  unsigned long timeSinceLastShot = 0;
+  
+  if( Op_LastShotMS > 0 ) {
+    timeSinceLastShot = ms - Op_LastShotMS;
+    curROF = 1000 / timeSinceLastShot;
+    fireRateOver8BPS = (curROF > 8);
+    DEBUG_PRINT("CurROF = ");DEBUG_PRINTLN(curROF);
+  } else {
+    curROF = 0;
+    fireRateOver8BPS = false;
+    DEBUG_PRINTLN("First Shot");
+  }
+  
+  // mech debounce method is based on the CodeX open source board software
+  // https://code.google.com/p/paintballcodex/
+  if( !fireRateOver8BPS && Conf_MechDebounce > 0 ) {
+    delay(Conf_MechDebounce);
+    //DEBUG_PRINT("     Mech Debounce MS= ");DEBUG_PRINTLN(Conf_MechDebounce - 1);
+  }
+  
+  // reset dwell to default
+  Op_Dwell = Conf_Dwell;
+    
+  // modify dwell on first shot for FSDO dwell
+  if( Op_FirstShot ) {
+    Op_FirstShot = false;
+      
+    // FSDO dwell
+    if( Conf_FSDODwell > 0 ) {
+      //DEBUG_PRINT("     FSDO Dwell MS= ");DEBUG_PRINTLN(Conf_FSDODwell - 1);
+      Op_Dwell += (Conf_FSDODwell);
+    }
+  }
+
+  // blink RGBLED for each shot
+  switch( Op_EyeStatus ) {
+    case EYES_ON: ledColor(LED_EYES_ON, 25); break;
+    case EYES_OFF: ledColor(LED_EYES_OFF, 25); break;
+    case EYES_BLOCKED: ledColor(LED_EYES_BLOCKED, 25); break;
+    default: ledColor(LED_WHITE, 25);
+  }
+
+  // and now actually fire the shot
+  activateSolenoid(Op_Dwell);
+
+  // blink off
+  ledOff();      
+
+  // closed bolt recock sequence
+  if( GUNMODE_CLOSED == Op_GunMode ) {
+    // fire noid 2 to recock
+    activateSolenoid2(Conf_ClosedBoltDwell);
+    
+    // eye delay
+    // note: this needs to be fixed and the FM_EyeCheck() needs to be changed
+    if( EYES_ON == Op_EyeStatus ) {
+      delay(Conf_ClosedBoltEyeDelay * 20); // 1-10
+    } else {
+      // reasonable delay time
+      delay(EYES_OFF_CLOSED_BOLT_DELAY);
+    }
+    
+    // additional wait time for hopper
+    loaderDelay();
+    
+    // close bolt
+    deactivateSolenoid2();
+    
+    // bolt delay time
+    // wait this many ms after bolt is closed in order to fire another shot
+    delay(Conf_ClosedBoltBoltDelay);
+  }
+
+
+  //// Reset operating mode stats
+  
+  // mark this so that trigger release code doesn't turn off LED
+  ShotWasFired = true;
+  
+  // track when the last shot occurred
+  Op_LastShotMS = millis();
+    
+  // set this after the shot, then after it goes back through the loop and the eye code updates they'll be unblocked
+  Op_EyesBlocked = true;
+  
+  // reset this
+  Op_FireShot = false;
+  Op_ForceShot = false;
+  
+  // set this to true so it will be reset to false by the code that checks for trigger release
+  Op_ShotWasForced = true;
+  
+  // set this so we know we actually fired a shot
+  Op_LastShotTaken = true;
+ 
   return ShotWasFired;
 }
 
@@ -367,11 +400,22 @@ void firingMode() {
   FM_PostShotProcess(ShotFired);
 }
 
-void fireSolenoid(int dwell) {
-  digitalWrite(SOLENOID_PIN, HIGH);    
+void activateSolenoid(byte dwell) {
+  digitalWrite(SOLENOID_PIN, HIGH);
   delay(dwell);
   digitalWrite(SOLENOID_PIN, LOW);
   DEBUG_PRINT("Fire! Dwell="); DEBUG_PRINTLN(dwell);
+}
+
+void activateSolenoid2(byte dwell) {
+  DEBUG_PRINT("Reload! Dwell="); DEBUG_PRINTLN(dwell);
+  delay(dwell);
+  digitalWrite(SOLENOID2_PIN, HIGH);
+}
+
+void deactivateSolenoid2() {
+  digitalWrite(SOLENOID2_PIN, LOW);
+  DEBUG_PRINTLN("Reloaded!");
 }
 
 void handleQueuedRampShots() {
