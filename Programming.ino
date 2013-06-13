@@ -41,9 +41,21 @@ void programmingMode() {
       DEBUG_PRINTLN("Trigger released, Entering programming mode...");
     } else {
       if( now >= (Prog_TriggerDownStart + PROG_RESET_HOLD_TIME) ) {
-        if( Prog_ResetWarningBlinkMS <= (now - PROG_RESET_WARNING_BLINK_TIME) ) {
+        if( Prog_ResetWarningBlinkMS <= (now - PROG_RESET_COMMIT_BLINK_TIME) ) {
           if( Prog_ResetWarningLastState ) {
             ledColor(LED_RED, LDB);
+            Prog_ResetWarningLastState = 0;
+          } else {
+            ledOff();
+            Prog_ResetWarningLastState = 1;
+          }
+          
+          Prog_ResetWarningBlinkMS = now;
+        }
+      } else if( now >= (Prog_TriggerDownStart + PROG_RESET_WARNING_TIME) ) {
+        if( Prog_ResetWarningBlinkMS <= (now - PROG_RESET_WARNING_BLINK_TIME) ) {
+          if( Prog_ResetWarningLastState ) {
+            ledColor(LED_YELLOW, LDB);
             Prog_ResetWarningLastState = 0;
           } else {
             ledOff();

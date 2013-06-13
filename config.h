@@ -137,7 +137,9 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 
 //-- Programming Configuration ------------------------------------------------------------
 #define PROG_RESET_HOLD_TIME 10000 // hold trigger additional 10 seconds to reset board
+#define PROG_RESET_WARNING_TIME 5000 // show warning blink after 5 seconds
 #define PROG_RESET_WARNING_BLINK_TIME 200 // how many ms per blink
+#define PROG_RESET_COMMIT_BLINK_TIME 100 // how many ms per blink
 
 
 // -------- CONSTANTS ---------------------------------------------------------------------
