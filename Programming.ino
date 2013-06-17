@@ -287,11 +287,11 @@ void programmingMode() {
 void progOutputRegisterValue(byte value, int registerNum) {
   for(int i = 0; i < value; i++ ) {
     ledOff();
-    delay(100);
+    delay(200);
     setLEDRegisterColor(registerNum, 1);
-    delay(100);
+    delay(200);
     //setLEDRegisterColor(registerNum, 2);
-    delay(100);
+    //delay(120);
   }
 }
 
