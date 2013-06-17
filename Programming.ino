@@ -127,7 +127,7 @@ void programmingMode() {
         if( pullLength < 1000 ) { 
           // move to next register
           Prog_CurrentRegister++;
-          if( Prog_CurrentRegister >= REGISTER_COUNT ) Prog_CurrentRegister = FIRST_REGISTER;
+          if( Prog_CurrentRegister > REGISTER_COUNT ) Prog_CurrentRegister = FIRST_REGISTER;
           
           // short blink
           ledOff();
