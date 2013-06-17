@@ -20,14 +20,6 @@ Note:
 This file needs no #includes because it has no file suffix (it's a .ino)
 the Arduino IDE will automatically concat all non-suffixed files
 into one code file before compiling, so this already has all includes
-    
-need to separate firing logic into separate units:
-- trigger input
-- eye input
-  - blink eye TX while trigger state is released, waiting or debouncing 
-  - make it solid when trigger state is pulled or held
-- ROF filtering 
-- shot firing
 
 */
 
@@ -393,6 +385,7 @@ void firingMode() {
   
   FM_HandleFireMode();
 
+  // FIXME: this should maybe go above HandleFireMode()
   FM_EyeCheck();
 
   bool ShotFired = FM_ProcessShot();
@@ -407,12 +400,14 @@ void activateSolenoid(byte dwell) {
   DEBUG_PRINT("Fire! Dwell="); DEBUG_PRINTLN(dwell);
 }
 
+// turn on second solenoid in closed bolt mode to open the breech
 void activateSolenoid2(byte dwell) {
   DEBUG_PRINT("Reload! Dwell="); DEBUG_PRINTLN(dwell);
   delay(dwell);
   digitalWrite(SOLENOID2_PIN, HIGH);
 }
 
+// turn off second solenoid in closed bolt mode to close the breech
 void deactivateSolenoid2() {
   digitalWrite(SOLENOID2_PIN, LOW);
   DEBUG_PRINTLN("Reloaded!");
