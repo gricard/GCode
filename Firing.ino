@@ -54,6 +54,19 @@ void FM_HandleFireMode() {
       //pullCount++;
       //DEBUG_PRINT("Pull count: ");
       //DEBUG_PRINTLN(pullCount);
+      
+    if( TRIGGER_STATE_HELD == TriggerState ) {
+      unsigned long ms = getTriggerDownMS();
+    
+      if( ms >= OP_FORCE_SHOT_TRIGGER_TIME ) {
+        // make sure we didn't do this already
+        if( !Op_ShotWasForced ) {
+          DEBUG_PRINTLN("Forced shot");
+          Op_ForceShot = true;
+        }
+      }
+    }
+      
       Op_FireShot = true;
     }
   }
