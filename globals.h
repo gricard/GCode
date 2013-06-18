@@ -125,6 +125,8 @@ byte Conf_ROFEyesOffFrac;
 byte Conf_ClosedBoltDwell;
 byte Conf_ClosedBoltEyeDelay;
 byte Conf_ClosedBoltBoltDelay;
+byte Conf_ROFOnOff;
+byte Conf_BoardMode;
 
 
 byte Trigger_PinState = -1; // for the actual pin state (HIGH/LOW)

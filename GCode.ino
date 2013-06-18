@@ -85,6 +85,8 @@ void setup() {
   Conf_ClosedBoltDwell = EEPROM.read(REGISTER_CLOSED_DWELL);
   Conf_ClosedBoltEyeDelay = EEPROM.read(REGISTER_CLOSED_EYE_DELAY);
   Conf_ClosedBoltBoltDelay = EEPROM.read(REGISTER_CLOSED_BOLT_DELAY);
+  Conf_ROFOnOff = EEPROM.read(REGISTER_ROF_ONOFF);
+  Conf_BoardMode = EEPROM.read(REGISTER_BOARD_MODE);
  
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   Conf_ROFEyesOffInt = EEPROM.read(REGISTER_ROF_OFF_INT);
@@ -109,6 +111,8 @@ void setup() {
   if( Conf_ClosedBoltDwell < 1 || Conf_ClosedBoltDwell > REGISTER_CLOSED_DWELL_MAX ) Conf_ClosedBoltDwell = DEFAULT_CLOSED_DWELL;
   if( Conf_ClosedBoltEyeDelay < 1 || Conf_ClosedBoltEyeDelay > REGISTER_CLOSED_EYE_DELAY_MAX ) Conf_ClosedBoltEyeDelay = DEFAULT_CLOSED_EYE_DELAY;
   if( Conf_ClosedBoltBoltDelay < 1 || Conf_ClosedBoltBoltDelay > REGISTER_CLOSED_BOLT_DELAY_MAX ) Conf_ClosedBoltBoltDelay = DEFAULT_CLOSED_BOLT_DELAY;
+  if( Conf_ROFOnOff < 1 || Conf_ROFOnOff > REGISTER_ROF_ONOFF_MAX ) Conf_ROFOnOff = DEFAULT_ROF_ONOFF;
+  if( Conf_BoardMode < 1 || Conf_BoardMode > REGISTER_BOARD_MODE_MAX ) Conf_BoardMode = DEFAULT_BOARD_MODE;
   
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   if( Conf_ROFEyesOffInt < 1 || Conf_ROFEyesOffInt > REGISTER_ROF_OFF_INT_MAX ) Conf_ROFEyesOffInt = DEFAULT_ROF_EYES_OFF_INT;
@@ -126,9 +130,11 @@ void setup() {
   DEBUG_PRINT("   ROFEyesOnFrac=");DEBUG_PRINTLN(Conf_ROFEyesOnFrac);
   DEBUG_PRINT("   ROFEyesOffInt=");DEBUG_PRINTLN(Conf_ROFEyesOffInt);
   DEBUG_PRINT("   ROFEyesOffFrac=");DEBUG_PRINTLN(Conf_ROFEyesOffFrac);
-  DEBUG_PRINT("   Conf_ClosedBoltDwell=");DEBUG_PRINTLN(Conf_ClosedBoltDwell);
-  DEBUG_PRINT("   Conf_ClosedBoltEyeDelay=");DEBUG_PRINTLN(Conf_ClosedBoltEyeDelay);
-  DEBUG_PRINT("   Conf_ClosedBoltBoltDelay=");DEBUG_PRINTLN(Conf_ClosedBoltBoltDelay);
+  DEBUG_PRINT("   ClosedBoltDwell=");DEBUG_PRINTLN(Conf_ClosedBoltDwell);
+  DEBUG_PRINT("   ClosedBoltEyeDelay=");DEBUG_PRINTLN(Conf_ClosedBoltEyeDelay);
+  DEBUG_PRINT("   ClosedBoltBoltDelay=");DEBUG_PRINTLN(Conf_ClosedBoltBoltDelay);
+  DEBUG_PRINT("   Conf_ROFOnOff=");DEBUG_PRINTLN(Conf_ROFOnOff);
+  DEBUG_PRINT("   Conf_BoardMode=");DEBUG_PRINTLN(Conf_BoardMode);
   
   // Convert register values to usable program values
   // setting of 1 is 0ms, so subtract one from register value
@@ -137,13 +143,14 @@ void setup() {
   Conf_FSDODwell -= 1;
   
   // convert ROF register values to numerical BPS value
-  Op_ROFEyesOn = convertROFValue(Conf_ROFEyesOnInt, Conf_ROFEyesOnFrac);
+  Op_ROFEyesOn = convertROFValueNew(Conf_ROFEyesOnInt, Conf_ROFEyesOnFrac);
   DEBUG_PRINT("Eyes on ROF = ");DEBUG_PRINT(Op_ROFEyesOn);DEBUG_PRINTLN("bps");
-  Op_ROFEyesOff = convertROFValue(Conf_ROFEyesOffInt, Conf_ROFEyesOffFrac);
+  Op_ROFEyesOff = convertROFValueNew(Conf_ROFEyesOffInt, Conf_ROFEyesOffFrac);
   DEBUG_PRINT("Eyes off ROF = ");DEBUG_PRINT(Op_ROFEyesOff);DEBUG_PRINTLN("bps");
 
   // If closed bolt dwell setting is set, change to closed bolt mode
-  if( Conf_ClosedBoltDwell > 1 ) {
+  //if( Conf_ClosedBoltDwell > 1 ) {
+  if( Conf_BoardMode == 2 ) { // FIXME: need constants for this
     Op_GunMode = GUNMODE_CLOSED;
     DEBUG_PRINTLN("Closed bolt mode enabled");
   }
@@ -157,7 +164,8 @@ void setup() {
   Debounce_DelayTime = Conf_Debounce; // for delay debounce
   
   // setup ROF cap
-  Op_UseROFCap = (Op_ROFEyesOn > 1);
+  //Op_UseROFCap = (Op_ROFEyesOn > 1);
+  Op_UseROFCap = (Conf_ROFOnOff == 1);
 
   // set default trigger state
   Trigger_PriorState = Trigger_State = TRIGGER_STATE_WAITING;
@@ -169,8 +177,9 @@ void setup() {
   // we have no way to turn them on/off while running (yet), so just leave them off  
   if( FIREMODE_AUTO == Conf_FireMode ) {
     // turn off eyes
-    eyesOff();
-    setEyeStatus(EYES_OFF);
+    // temporarily remove this code, want to leave eyes on for full auto now that eye logic is fixed
+    //eyesOff();
+    //setEyeStatus(EYES_OFF);
     
     // turn on ROF cap regardless of ROF register settings
     // full auto will use eyes off ROF cap (for now)
@@ -263,6 +272,20 @@ float convertROFValue(byte rofInt, byte rofFrac) {
   } else {
     return 1.0;
   }
+}
+
+float convertROFValueNew(byte rofInt, byte rofFrac) {
+  //if( rofInt > 1 ) {
+    float rof = rofInt;
+    
+    // fractional value is 1-11, 1 = 0.0, 2 = 0.1, etc.
+    // subtract the 1 from the value and divide by ten to get the fractional value to add to rof
+    rof += ((rofFrac - 1) / 10.0);
+    
+    return rof;
+  //} else {
+  //  return 1.0;
+  //}
 }
 
 // this isn't really used anymore, but could be useful for debugging

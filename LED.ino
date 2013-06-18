@@ -57,20 +57,21 @@ void ledOff() {
 void setLEDRegisterColor(int regNum, byte colorNum) {
   byte brightness = 25;
   switch( regNum ) {
-    case REGISTER_DEBOUNCE:            ledColor(colorNum == 1 ? REGISTER_1_COLOR_1 : REGISTER_1_COLOR_2, brightness); break;
-    case REGISTER_DWELL:               ledColor(colorNum == 1 ? REGISTER_2_COLOR_1 : REGISTER_2_COLOR_2, brightness); break;
-    case REGISTER_LOADER_DELAY:        ledColor(colorNum == 1 ? REGISTER_3_COLOR_1 : REGISTER_3_COLOR_2, brightness); break;
-    case REGISTER_MECH_DEBOUNCE:       ledColor(colorNum == 1 ? REGISTER_4_COLOR_1 : REGISTER_4_COLOR_2, brightness); break;
-    case REGISTER_FSDO_DWELL:          ledColor(colorNum == 1 ? REGISTER_5_COLOR_1 : REGISTER_5_COLOR_2, brightness); break;
-    case REGISTER_FIRE_MODE:           ledColor(colorNum == 1 ? REGISTER_6_COLOR_1 : REGISTER_6_COLOR_2, brightness); break;
-    case REGISTER_ROF_ON_INT:          ledColor(colorNum == 1 ? REGISTER_7_COLOR_1 : REGISTER_7_COLOR_2, brightness); break;
-    case REGISTER_ROF_ON_FRAC:         ledColor(colorNum == 1 ? REGISTER_8_COLOR_1 : REGISTER_8_COLOR_2, brightness); break;
-    case REGISTER_CLOSED_DWELL:        ledColor(colorNum == 1 ? REGISTER_9_COLOR_1 : REGISTER_9_COLOR_2, brightness); break;
-    case REGISTER_CLOSED_EYE_DELAY:    ledColor(colorNum == 1 ? REGISTER_10_COLOR_1 : REGISTER_10_COLOR_2, brightness); break;
-    case REGISTER_CLOSED_BOLT_DELAY:   ledColor(colorNum == 1 ? REGISTER_11_COLOR_1 : REGISTER_11_COLOR_2, brightness); break;
-    
-    case REGISTER_ROF_OFF_INT:         ledColor(colorNum == 1 ? REGISTER_12_COLOR_1 : REGISTER_12_COLOR_2, brightness); break;
-    case REGISTER_ROF_OFF_FRAC:        ledColor(colorNum == 1 ? REGISTER_13_COLOR_1 : REGISTER_13_COLOR_2, brightness); break;
+    case REGISTER_FIRE_MODE:           ledColor(colorNum == 1 ? REGISTER_1_COLOR_1 : REGISTER_1_COLOR_2, brightness); break;
+    case REGISTER_DEBOUNCE:            ledColor(colorNum == 1 ? REGISTER_2_COLOR_1 : REGISTER_2_COLOR_2, brightness); break;
+    case REGISTER_MECH_DEBOUNCE:       ledColor(colorNum == 1 ? REGISTER_3_COLOR_1 : REGISTER_3_COLOR_2, brightness); break;
+    case REGISTER_DWELL:               ledColor(colorNum == 1 ? REGISTER_4_COLOR_1 : REGISTER_4_COLOR_2, brightness); break;
+    case REGISTER_LOADER_DELAY:        ledColor(colorNum == 1 ? REGISTER_5_COLOR_1 : REGISTER_5_COLOR_2, brightness); break;
+    case REGISTER_FSDO_DWELL:          ledColor(colorNum == 1 ? REGISTER_6_COLOR_1 : REGISTER_6_COLOR_2, brightness); break;
+    case REGISTER_BOARD_MODE:          ledColor(colorNum == 1 ? REGISTER_7_COLOR_1 : REGISTER_7_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_DWELL:        ledColor(colorNum == 1 ? REGISTER_8_COLOR_1 : REGISTER_8_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_EYE_DELAY:    ledColor(colorNum == 1 ? REGISTER_9_COLOR_1 : REGISTER_9_COLOR_2, brightness); break;
+    case REGISTER_CLOSED_BOLT_DELAY:   ledColor(colorNum == 1 ? REGISTER_10_COLOR_1 : REGISTER_10_COLOR_2, brightness); break;
+    case REGISTER_ROF_ONOFF:           ledColor(colorNum == 1 ? REGISTER_11_COLOR_1 : REGISTER_11_COLOR_2, brightness); break;    
+    case REGISTER_ROF_ON_INT:          ledColor(colorNum == 1 ? REGISTER_12_COLOR_1 : REGISTER_12_COLOR_2, brightness); break;
+    case REGISTER_ROF_ON_FRAC:         ledColor(colorNum == 1 ? REGISTER_13_COLOR_1 : REGISTER_13_COLOR_2, brightness); break;
+    case REGISTER_ROF_OFF_INT:         ledColor(colorNum == 1 ? REGISTER_14_COLOR_1 : REGISTER_14_COLOR_2, brightness); break;
+    case REGISTER_ROF_OFF_FRAC:        ledColor(colorNum == 1 ? REGISTER_15_COLOR_1 : REGISTER_15_COLOR_2, brightness); break;
 
     default:                           ledColor(LED_WHITE, brightness);
   }

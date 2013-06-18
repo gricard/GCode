@@ -52,6 +52,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEFAULT_CLOSED_DWELL           1 // 1 = 0ff, 2=2ms, 3=3ms, etc.
 #define DEFAULT_CLOSED_EYE_DELAY       8 // 160ms
 #define DEFAULT_CLOSED_BOLT_DELAY      25 // 25ms
+#define DEFAULT_ROF_ONOFF              1 // on , 2 = off
+#define DEFAULT_BOARD_MODE             1 // 1 = viking (open bolt), 2 = excalibur (closed bolt)
+
 
 
 // Register max values
@@ -68,6 +71,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REGISTER_CLOSED_BOLT_DELAY_MAX   35 // 35ms
 #define REGISTER_ROF_OFF_INT_MAX         12
 #define REGISTER_ROF_OFF_FRAC_MAX        10
+#define REGISTER_ROF_ONOFF_MAX           2
+#define REGISTER_BOARD_MODE_MAX          2
 
 
 //-- Rate of Fire Limiting Configuration --------------------------------------------------
@@ -172,33 +177,36 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define MODE_FIRING                   1
 
 // Program Version
-#define PROGRAM_VERSION               8
+#define PROGRAM_VERSION               9
 
 // EEPROM register numbers
 #define REGISTER_VERSION              0  // not a programmed register, used to store program version
 
-#define REGISTER_DEBOUNCE             1
-#define REGISTER_DWELL                2
-#define REGISTER_LOADER_DELAY         3
-#define REGISTER_MECH_DEBOUNCE        4
-#define REGISTER_FSDO_DWELL           5
-#define REGISTER_FIRE_MODE            6
-#define REGISTER_ROF_ON_INT           7
-#define REGISTER_ROF_ON_FRAC          8
-#define REGISTER_CLOSED_DWELL         9    // second solenoid dwell for closed bolt mode, set this to anything other than 1 to turn on close bolt mode (5ms)
-#define REGISTER_CLOSED_EYE_DELAY     10   // closed bolt eye delay - how long to wait for ball to enter breech (160ms, 20ms increments)
-#define REGISTER_CLOSED_BOLT_DELAY    11   // how long to wait for bolt to close before firing
+#define REGISTER_FIRE_MODE            1
+#define REGISTER_DEBOUNCE             2
+#define REGISTER_MECH_DEBOUNCE        3
+#define REGISTER_DWELL                4
+#define REGISTER_LOADER_DELAY         5
+#define REGISTER_FSDO_DWELL           6
+#define REGISTER_BOARD_MODE           7
 
+#define REGISTER_CLOSED_DWELL         8    // second solenoid dwell for closed bolt mode, set this to anything other than 1 to turn on close bolt mode (5ms)
+#define REGISTER_CLOSED_EYE_DELAY     9    // closed bolt eye delay - how long to wait for ball to enter breech (160ms, 20ms increments)
+#define REGISTER_CLOSED_BOLT_DELAY    10   // how long to wait for bolt to close before firing
+
+#define REGISTER_ROF_ONOFF            11
+#define REGISTER_ROF_ON_INT           12
+#define REGISTER_ROF_ON_FRAC          13
+#define REGISTER_ROF_OFF_INT          14
+#define REGISTER_ROF_OFF_FRAC         15
+
+// not in use yet
 #define REGISTER_EYE_MODE
 #define REGISTER_BOLT_DELAY
 #define REGISTER_CPF
-#define REGISTER_BOARD_MODE 
-
-#define REGISTER_ROF_OFF_INT          12
-#define REGISTER_ROF_OFF_FRAC         13
 
 // explicitly set which register programming mode starts at
-#define FIRST_REGISTER                REGISTER_DEBOUNCE
+#define FIRST_REGISTER                REGISTER_FIRE_MODE
 
 // new color scheme for programming registers
 // color 1 is first color displayed, color 2 is second color displayed
@@ -247,9 +255,9 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 // Total # of registers we're using
 // Make sure this is updated if new programming registers are added!
 #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
-#define REGISTER_COUNT                13
+#define REGISTER_COUNT                15
 #else
-#define REGISTER_COUNT                11
+#define REGISTER_COUNT                13
 #endif
 
 
