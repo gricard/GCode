@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEFAULT_CLOSED_BOLT_DELAY      25 // 25ms
 #define DEFAULT_ROF_ONOFF              1 // on , 2 = off
 #define DEFAULT_BOARD_MODE             1 // 1 = viking (open bolt), 2 = excalibur (closed bolt)
-
+#define DEFAULT_DEBOUNCE_MODE          1 // 1 = sequential, 2 = delay, 3 = fine-grain delay
 
 
 // Register max values
@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REGISTER_ROF_OFF_FRAC_MAX        10
 #define REGISTER_ROF_ONOFF_MAX           2
 #define REGISTER_BOARD_MODE_MAX          2
+#define REGISTER_DEBOUNCE_MODE_MAX       20
 
 
 //-- Rate of Fire Limiting Configuration --------------------------------------------------
@@ -89,9 +90,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RAMP_ACTIVE_TIME_BETWEEN_PULLS         1000 / RAMP_MIN_BPS 
 
 //-- Debounce Configuration ---------------------------------------------------------------
-// only set one of these
-#define DEBOUNCE_MODE_SEQUENTIAL       true
-#define DEBOUNCE_MODE_DELAY            false
+#define DEBOUNCE_MODE_SEQUENTIAL       1
+#define DEBOUNCE_MODE_DELAY            2
+#define DEBOUNCE_MODE_DELAY_FINE       3
+
+
 
 
 //-- Eye Configuration --------------------------------------------------------------------
@@ -177,7 +180,7 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define MODE_FIRING                   1
 
 // Program Version
-#define PROGRAM_VERSION               9
+#define PROGRAM_VERSION               10
 
 // EEPROM register numbers
 #define REGISTER_VERSION              0  // not a programmed register, used to store program version
@@ -199,6 +202,8 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define REGISTER_ROF_ON_FRAC          13
 #define REGISTER_ROF_OFF_INT          14
 #define REGISTER_ROF_OFF_FRAC         15
+
+#define REGISTER_DEBOUNCE_MODE        16
 
 // not in use yet
 #define REGISTER_EYE_MODE
@@ -255,9 +260,9 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 // Total # of registers we're using
 // Make sure this is updated if new programming registers are added!
 #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
-#define REGISTER_COUNT                15
+#define REGISTER_COUNT                16
 #else
-#define REGISTER_COUNT                13
+#define REGISTER_COUNT                14
 #endif
 
 

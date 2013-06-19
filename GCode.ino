@@ -87,6 +87,7 @@ void setup() {
   Conf_ClosedBoltBoltDelay = EEPROM.read(REGISTER_CLOSED_BOLT_DELAY);
   Conf_ROFOnOff = EEPROM.read(REGISTER_ROF_ONOFF);
   Conf_BoardMode = EEPROM.read(REGISTER_BOARD_MODE);
+  Conf_DebounceMode = EEPROM.read(REGISTER_DEBOUNCE_MODE);
  
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   Conf_ROFEyesOffInt = EEPROM.read(REGISTER_ROF_OFF_INT);
@@ -113,6 +114,7 @@ void setup() {
   if( Conf_ClosedBoltBoltDelay < 1 || Conf_ClosedBoltBoltDelay > REGISTER_CLOSED_BOLT_DELAY_MAX ) Conf_ClosedBoltBoltDelay = DEFAULT_CLOSED_BOLT_DELAY;
   if( Conf_ROFOnOff < 1 || Conf_ROFOnOff > REGISTER_ROF_ONOFF_MAX ) Conf_ROFOnOff = DEFAULT_ROF_ONOFF;
   if( Conf_BoardMode < 1 || Conf_BoardMode > REGISTER_BOARD_MODE_MAX ) Conf_BoardMode = DEFAULT_BOARD_MODE;
+  if( Conf_DebounceMode < 1 || Conf_DebounceMode > REGISTER_DEBOUNCE_MODE_MAX ) Conf_DebounceMode = DEFAULT_DEBOUNCE_MODE;
   
   #ifdef ALLOW_CONFIGURABLE_EYES_OFF_ROF
   if( Conf_ROFEyesOffInt < 1 || Conf_ROFEyesOffInt > REGISTER_ROF_OFF_INT_MAX ) Conf_ROFEyesOffInt = DEFAULT_ROF_EYES_OFF_INT;
@@ -135,6 +137,7 @@ void setup() {
   DEBUG_PRINT("   ClosedBoltBoltDelay=");DEBUG_PRINTLN(Conf_ClosedBoltBoltDelay);
   DEBUG_PRINT("   Conf_ROFOnOff=");DEBUG_PRINTLN(Conf_ROFOnOff);
   DEBUG_PRINT("   Conf_BoardMode=");DEBUG_PRINTLN(Conf_BoardMode);
+  DEBUG_PRINT("   Conf_DebounceMode=");DEBUG_PRINTLN(Conf_DebounceMode);
   
   // Convert register values to usable program values
   // setting of 1 is 0ms, so subtract one from register value
@@ -235,6 +238,11 @@ byte getMaxRegisterValue(int regNum) {
     case REGISTER_ROF_ON_FRAC:         return REGISTER_ROF_ON_FRAC_MAX;
     case REGISTER_ROF_OFF_INT:         return REGISTER_ROF_OFF_INT_MAX;
     case REGISTER_ROF_OFF_FRAC:        return REGISTER_ROF_OFF_FRAC_MAX;
+    
+    case REGISTER_BOARD_MODE:          return REGISTER_BOARD_MODE_MAX;
+    case REGISTER_ROF_ONOFF:           return REGISTER_ROF_ONOFF_MAX;
+    case REGISTER_DEBOUNCE_MODE:       return REGISTER_DEBOUNCE_MODE_MAX;
+    
     default: 
       DEBUG_PRINT("ERROR: getMaxRegisterValue(): unrecognized register: ");
       DEBUG_PRINTLN(regNum);

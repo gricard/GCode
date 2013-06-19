@@ -127,6 +127,7 @@ byte Conf_ClosedBoltEyeDelay;
 byte Conf_ClosedBoltBoltDelay;
 byte Conf_ROFOnOff;
 byte Conf_BoardMode;
+byte Conf_DebounceMode;
 
 
 byte Trigger_PinState = -1; // for the actual pin state (HIGH/LOW)

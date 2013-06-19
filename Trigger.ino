@@ -56,11 +56,18 @@ int getTriggerState() {
       if( Trigger_PriorReading == triggerReading ) {
         bool triggerDebounced = false;
         
-        if( DEBOUNCE_MODE_SEQUENTIAL ) {
-          triggerDebounced = debounceTriggerSequential();
-        } else {
-          // DEBOUNCE_MODE_DELAY
-          triggerDebounced = debounceTriggerDelay();
+        switch( Conf_DebounceMode ) {
+          case DEBOUNCE_MODE_DELAY:
+            triggerDebounced = debounceTriggerDelay();
+            break;           
+          case DEBOUNCE_MODE_DELAY_FINE:
+            triggerDebounced = debounceTriggerDelayFine();
+            break;
+            
+          default:
+          case DEBOUNCE_MODE_SEQUENTIAL:
+            triggerDebounced = debounceTriggerSequential();
+            break;
         }
         
         if( triggerDebounced ) {
@@ -161,5 +168,14 @@ bool debounceTriggerSequential() {
 bool debounceTriggerDelay() {
   // delay Debounce_DelayTime ms and return true
   delay(Debounce_DelayTime);
+  return true;
+}
+
+// this is a generic debounce method that simply waits for a short 
+// period of time for the switch to stop bouncing. 
+// this version delays in smaller increments
+bool debounceTriggerDelayFine() {
+  // delay Debounce_DelayTime * 100 ms and return true
+  delayMicroseconds(Debounce_DelayTime * 100);
   return true;
 }
