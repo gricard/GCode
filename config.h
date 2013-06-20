@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEFAULT_MECH_DEBOUNCE          1 // off, 2 = 1
 #define DEFAULT_FSDO_DWELL             1 // off , 2 = 1ms
 #define DEFAULT_FIRE_MODE              1 // semi
-#define DEFAULT_ROF_EYES_ON_INT        ROF_UNCAPPED // no cap
+#define DEFAULT_ROF_EYES_ON_INT        30 // no cap (used to be ROF_UNCAPPED when we comfined eyes on and cap in one register)
 #define DEFAULT_ROF_EYES_ON_FRAC       0 // no cap
 #define DEFAULT_ROF_EYES_OFF_INT       8 // 8.0bps, integral part of rof cap
 #define DEFAULT_ROF_EYES_OFF_FRAC      1 // 8.0bps, fractional part of rof cap (values start at 1 = 0.0, 2 = 0.1, etc.)
@@ -63,13 +63,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REGISTER_LOADER_DELAY_MAX        10
 #define REGISTER_MECH_DEBOUNCE_MAX       10
 #define REGISTER_FSDO_DWELL_MAX          5
-#define REGISTER_FIRE_MODE_MAX           3 // Note: change this when you add new modes
-#define REGISTER_ROF_ON_INT_MAX          25 // integral part of rof cap
+#define REGISTER_FIRE_MODE_MAX           4 // Note: change this when you add new modes
+#define REGISTER_ROF_ON_INT_MAX          30 // integral part of rof cap
 #define REGISTER_ROF_ON_FRAC_MAX         10 // value - 1 = fraction (FRACtion of 10 = .9 , FRAC of 1 = .0)
 #define REGISTER_CLOSED_DWELL_MAX        13 // 13ms
 #define REGISTER_CLOSED_EYE_DELAY_MAX    10 // 200ms max wait time
 #define REGISTER_CLOSED_BOLT_DELAY_MAX   35 // 35ms
-#define REGISTER_ROF_OFF_INT_MAX         12
+#define REGISTER_ROF_OFF_INT_MAX         15
 #define REGISTER_ROF_OFF_FRAC_MAX        10
 #define REGISTER_ROF_ONOFF_MAX           2
 #define REGISTER_BOARD_MODE_MAX          2
@@ -88,6 +88,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RAMP_INACTIVE_TIME_BETWEEN_PULLS       1000 
 // # of ms allowed between pulls to start ramp
 #define RAMP_ACTIVE_TIME_BETWEEN_PULLS         1000 / RAMP_MIN_BPS 
+
+//-- Jackhammer Mode Configuration --------------------------------------------------------
+#define JACKHAMMER_ON_TIME             2000
+#define JACKHAMMER_OFF_TIME            500
+#define JACKHAMMER_OFF_ROF             10.0
+#define JACKHAMMER_UNCAPPED            false // always run uncapped in jackhammer mode
+
 
 //-- Debounce Configuration ---------------------------------------------------------------
 #define DEBOUNCE_MODE_SEQUENTIAL       1
@@ -170,6 +177,7 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define FIREMODE_SEMI             1
 #define FIREMODE_AUTO             2
 #define FIREMODE_RAMP             3
+#define FIREMODE_JACKHAMMER       4 // fun mode that T2 wanted
 
 //// Gun modes
 #define GUNMODE_OPEN                  0 // cpen bolt

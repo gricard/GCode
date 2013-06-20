@@ -84,6 +84,10 @@ bool Op_UseROFCap = true;
 unsigned long Op_LastShotMS = 0;
 bool Op_TriggerWasPulled = false;
 
+float Op_CurrentROF = 0.0;
+float Op_PeakROF = 0.0;
+
+
 // ramping items
 byte Op_RampStarted = false;
 byte Op_RampStartShotCount = 0;
@@ -92,6 +96,13 @@ unsigned long Op_LastPullMS = 0; // last trigger pull timestamp
 unsigned long Op_CurPullMS = 0; // current trigger pull timestamp
 unsigned long Op_RampLastPullMS = 0;
 bool Op_LastShotTaken = false;
+
+// for T2's jackhammer mode 
+unsigned long Op_LastJackhammer = 0;
+bool Op_JackhammerOn = true;
+bool Op_JackhammerSaveROFCap;
+float Op_JackhammerSaveROFOn;
+float Op_JackhammerSaveROFOff;
 
 // combined final value for ROF settings
 float Op_ROFEyesOn;

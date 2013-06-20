@@ -49,25 +49,71 @@ void FM_UpdateEyeState() {
 }
 
 void FM_HandleFireMode() {
-  if( FIREMODE_AUTO == Conf_FireMode ) {
+  if( FIREMODE_AUTO == Conf_FireMode || FIREMODE_JACKHAMMER == Conf_FireMode ) {
     if( TRIGGER_STATE_PULLED == TriggerState || TRIGGER_STATE_HELD == TriggerState ) {
       //pullCount++;
       //DEBUG_PRINT("Pull count: ");
       //DEBUG_PRINTLN(pullCount);
       
-    if( TRIGGER_STATE_HELD == TriggerState ) {
-      unsigned long ms = getTriggerDownMS();
+      if( TRIGGER_STATE_HELD == TriggerState ) {
+        unsigned long ms = getTriggerDownMS();
     
-      if( ms >= OP_FORCE_SHOT_TRIGGER_TIME ) {
-        // make sure we didn't do this already
-        if( !Op_ShotWasForced ) {
-          DEBUG_PRINTLN("Forced shot");
-          Op_ForceShot = true;
+        if( ms >= OP_FORCE_SHOT_TRIGGER_TIME ) {
+          // make sure we didn't do this already
+          if( !Op_ShotWasForced ) {
+            DEBUG_PRINTLN("Forced shot");
+            Op_ForceShot = true;
+          }
         }
       }
-    }
-      
-      Op_FireShot = true;
+
+      if( FIREMODE_JACKHAMMER == Conf_FireMode ) {
+        // Op_LastShotMS
+        // Op_LastJackhammer
+        // Op_CurrentROF
+        // Op_PeakROF
+        
+        unsigned long now = millis();
+        
+        if( Op_JackhammerOn ) {
+          if( now > (Op_LastJackhammer + JACKHAMMER_ON_TIME) ) {
+            // Jackhammer has been on long enough
+            Op_JackhammerOn = false;
+            Op_LastJackhammer = now;
+            
+            // save old ROF state and switch to JACKHAMMER_OFF_ROF bps when we turn off Jackhammer
+            Op_JackhammerSaveROFCap = Op_UseROFCap;
+            Op_JackhammerSaveROFOn = Op_ROFEyesOn;
+            Op_JackhammerSaveROFOff = Op_ROFEyesOff;
+            Op_UseROFCap = true;
+            Op_ROFEyesOn = JACKHAMMER_OFF_ROF;
+            Op_ROFEyesOff = JACKHAMMER_OFF_ROF;
+          }
+          
+          Op_FireShot = true;
+        } else {
+          // Jackhammer off , slow down to JACKHAMMER_OFF_ROF bps
+          if( now > (Op_LastJackhammer + JACKHAMMER_OFF_TIME) ) {
+            // Jackhammer has been on long enough
+            Op_JackhammerOn = true;
+            Op_LastJackhammer = now;
+            
+            if( JACKHAMMER_UNCAPPED ) {
+              Op_UseROFCap = false;
+            } else {
+              // restore old ROF state when we turn jackhammer back on
+              Op_UseROFCap = Op_JackhammerSaveROFCap;
+              Op_ROFEyesOn = Op_JackhammerSaveROFOn;
+              Op_ROFEyesOff = Op_JackhammerSaveROFOff;
+            }
+          }
+          
+          Op_FireShot = true;
+        }
+      } else {
+        // FIREMODE_AUTO == Conf_FireMode
+        Op_FireShot = true;
+      }
     }
   }
   else // semi-auto or ramp
@@ -272,16 +318,16 @@ bool FM_ProcessShot() {
   //// Fire a shot
   // mech debounce
   int fireRateOver8BPS = false;
-  int curROF = 0;
+  //int curROF = 0;
   unsigned long timeSinceLastShot = 0;
   
   if( Op_LastShotMS > 0 ) {
     timeSinceLastShot = ms - Op_LastShotMS;
-    curROF = 1000 / timeSinceLastShot;
-    fireRateOver8BPS = (curROF > 8);
-    DEBUG_PRINT("CurROF = ");DEBUG_PRINTLN(curROF);
+    Op_CurrentROF = 1000 / timeSinceLastShot;
+    fireRateOver8BPS = (Op_CurrentROF > 8);
+    DEBUG_PRINT("CurROF = ");DEBUG_PRINTLN(Op_CurrentROF);
   } else {
-    curROF = 0;
+    Op_CurrentROF = 0.0;
     fireRateOver8BPS = false;
     DEBUG_PRINTLN("First Shot");
   }
