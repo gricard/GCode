@@ -195,6 +195,10 @@ void setup() {
   if( MODE_PROGRAMMING == OperatingMode ) {
     // track pull time so we can reset the board if held for a certain length of time
     Prog_TriggerDownStart = millis();
+    
+    // programming mode needs to always be locked into a reliable debounce mode
+    Conf_DebounceMode = DEBOUNCE_MODE_SEQUENTIAL;
+    Conf_Debounce = 5;
   }
   
   // start off generic timer
