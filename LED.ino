@@ -72,7 +72,8 @@ void setLEDRegisterColor(int regNum, byte colorNum) {
     case REGISTER_ROF_ON_FRAC:         ledColor(colorNum == 1 ? REGISTER_13_COLOR_1 : REGISTER_13_COLOR_2, brightness); break;
     case REGISTER_ROF_OFF_INT:         ledColor(colorNum == 1 ? REGISTER_14_COLOR_1 : REGISTER_14_COLOR_2, brightness); break;
     case REGISTER_ROF_OFF_FRAC:        ledColor(colorNum == 1 ? REGISTER_15_COLOR_1 : REGISTER_15_COLOR_2, brightness); break;
-
+    case REGISTER_DEBOUNCE_MODE:       ledColor(colorNum == 1 ? REGISTER_16_COLOR_1 : REGISTER_16_COLOR_2, brightness); break;
+    
     default:                           ledColor(LED_WHITE, brightness);
   }
 }
