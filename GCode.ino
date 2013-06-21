@@ -22,9 +22,14 @@ Please read the README.txt
 
 #include <EEPROM.h>
 
+// for sleep mode
+#include <avr/sleep.h>
+#include <avr/power.h>
+
 #include "config.h"
 #include "globals.h"
 #include "debug.h"
+
 
 // this function is called once upon device start
 void setup() {
@@ -33,25 +38,8 @@ void setup() {
   Serial.begin(9600);
   #endif;
 
-  // initialize the solenoid pin(s) as an output:
-  pinMode(SOLENOID_PIN, OUTPUT);
-  pinMode(SOLENOID2_PIN, OUTPUT);
+  setupPins();
   
-  // initialize the pushbutton pin as an input:
-  pinMode(TRIGGER_PIN, INPUT);
-  
-  // don't need this. using physical pull-up to avoid potential bounce caused by internal pull-up in low voltage situations
-  // turn on internal 20kOhm pull-up resistor
-  //digitalWrite(TRIGGER_PIN, HIGH);
-  
-  // initialize the eye tranceiver pin as an output:
-  pinMode(EYE_TX_PIN, OUTPUT);  
-  
-  // initialize the eye receiver pin as an input:
-  pinMode(EYE_RX_PIN, INPUT);  
-  
-  // Note: RGB LED pins do not need initialization since they're handled with analogWrite()
-
   // Note: do a raw read here , don't use triggerRead() until we're in the main loop
   byte pinState = digitalRead(TRIGGER_PIN);
 
@@ -224,6 +212,32 @@ void loop(){
 
 
 /****************************************** Misc. Functions ************************************/
+void setupPins() {
+    // initialize the solenoid pin(s) as an output:
+  pinMode(SOLENOID_PIN, OUTPUT);
+  pinMode(SOLENOID2_PIN, OUTPUT);
+  
+  // initialize the pushbutton pin as an input:
+  pinMode(TRIGGER_PIN, INPUT);
+  
+  // don't need this. using physical pull-up to avoid potential bounce caused by internal pull-up in low voltage situations
+  // turn on internal 20kOhm pull-up resistor
+  //digitalWrite(TRIGGER_PIN, HIGH);
+  
+  // initialize the eye tranceiver pin as an output:
+  pinMode(EYE_TX_PIN, OUTPUT);  
+  
+  // initialize the eye receiver pin as an input:
+  pinMode(EYE_RX_PIN, INPUT);  
+    
+  // Note: RGB LED pins do not need initialization since they're handled with analogWrite()
+  // but do this anyway in this function since it is used after we wake from sleep to reset pins
+  pinMode(RGBLED_PIN_RED, OUTPUT);
+  pinMode(RGBLED_PIN_GREEN, OUTPUT);
+  pinMode(RGBLED_PIN_BLUE, OUTPUT);
+}
+
+
 byte getMaxRegisterValue(int regNum) {
   switch( regNum ) {
     case REGISTER_DEBOUNCE:            return REGISTER_DEBOUNCE_MAX;

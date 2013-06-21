@@ -80,6 +80,9 @@ bool Op_ForceShot = false;
 bool Op_ShotWasForced = false;
 byte Op_GunMode = GUNMODE_OPEN; // default to open bolt mode
 
+bool Op_SleepMode = false;
+unsigned long Op_LastSleepMS = 0;
+
 bool Op_UseROFCap = true;
 unsigned long Op_LastShotMS = 0;
 bool Op_TriggerWasPulled = false;

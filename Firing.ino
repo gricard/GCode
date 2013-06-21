@@ -437,19 +437,31 @@ void FM_PostShotProcess(bool ShotWasFired) {
   operationTiming = millis();
 }
 
-void firingMode() {    
-  FM_UpdateTriggerState();
+void firingMode() {
+  if( !Op_SleepMode ) { 
+    FM_UpdateTriggerState();
   
-  FM_UpdateEyeState();
+    FM_UpdateEyeState();
   
-  FM_HandleFireMode();
+    FM_HandleFireMode();
 
-  // FIXME: this should maybe go above HandleFireMode()
-  FM_EyeCheck();
+    // FIXME: this should maybe go above HandleFireMode()
+    FM_EyeCheck();
 
-  bool ShotFired = FM_ProcessShot();
+    bool ShotFired = FM_ProcessShot();
 
-  FM_PostShotProcess(ShotFired);
+    FM_PostShotProcess(ShotFired);
+    
+    // if we haven't taken a shot in over SLEEP_MODE_TIMEOUT
+    if( !ShotFired && operationTiming > (Op_LastSleepMS + SLEEP_MODE_DELAY) &&  (Op_LastShotMS <= (operationTiming - SLEEP_MODE_TIMEOUT)) ) {
+      // go to sleep
+      DEBUG_PRINTLN("going to sleep");
+      delay(2000);
+      enterSleep();
+    } 
+  } else {
+    ledColor(LED_TEAL, 25);
+  }
 }
 
 void activateSolenoid(byte dwell) {
@@ -489,4 +501,90 @@ void handleQueuedRampShots() {
       DEBUG_PRINTLN("Ramp stopped");
     }
   }
+}
+
+void enterSleep(void)
+{
+  DEBUG_FLUSH();
+  
+  // Note: something keeps screwing with the LED after going into sleep
+  // either turning it off, or changing the color
+  ledOff();
+  ledColor(LED_TEAL, 25);
+
+  Op_SleepMode = true;
+
+  // turn off eyes
+  disableEyeTX();
+  
+  // make sure no pins are not floating
+  // enable internal pull up resistor
+  pinMode(7, INPUT);
+  digitalWrite(7, HIGH);
+  pinMode(8, INPUT);
+  digitalWrite(8, HIGH);
+  pinMode(12, INPUT);
+  digitalWrite(12, HIGH);
+
+  sleep_enable();
+  attachInterrupt(0, wakeUp, LOW);
+  
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  power_adc_disable();
+  power_spi_disable();
+  power_timer0_disable();
+  power_timer2_disable();
+  power_twi_disable(); 
+  
+  //cli();
+  //sleep_bod_disable();
+  //sei();
+  sleep_cpu();
+
+  /*
+  set_sleep_mode(SLEEP_MODE_IDLE);
+
+  // Disable all of the unused peripherals. This will reduce power
+  // consumption further and, more importantly, some of these
+  // peripherals may generate interrupts that will wake our Arduino from
+  // sleep!
+  //
+  power_adc_disable();
+  power_spi_disable();
+  power_timer0_disable();
+  power_timer2_disable();
+  power_twi_disable(); 
+
+  // Now enter sleep mode. 
+  sleep_mode();
+  */
+  
+  
+  // The program will continue from here after the timer timeout*/
+  DEBUG_PRINTLN("returned from sleep");
+  sleep_disable(); // First thing to do is disable sleep. 
+  detachInterrupt(0);
+  Op_LastSleepMS = millis();
+  
+  // Re-enable the peripherals. 
+  power_all_enable();
+  
+  // reset pins
+  digitalWrite(7, LOW);
+  digitalWrite(8, LOW);
+  digitalWrite(12, LOW);
+  
+  // reset pin modes
+  setupPins();
+  
+  // turn eyes back on
+  enableEyeTX();
+}
+
+
+void wakeUp()
+{
+  //sleep_disable();
+  //detachInterrupt(0);
+  Op_SleepMode = false;
 }

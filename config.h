@@ -102,8 +102,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE_MODE_DELAY_FINE       3
 
 
-
-
 //-- Eye Configuration --------------------------------------------------------------------
 #define OP_EYES_OFF_TRIGGER_TIME         2000
 #define OP_FORCE_SHOT_TRIGGER_TIME       500
@@ -158,26 +156,31 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 #define PROG_RESET_COMMIT_BLINK_TIME 100 // how many ms per blink
 
 
+//-- Sleep Mode Configuration -------------------------------------------------------------
+#define SLEEP_MODE_TIMEOUT   15000    // wait this long after a trigger pull to go to sleep
+#define SLEEP_MODE_DELAY     15000    // wait this long between sleeps
+
+
 // -------- CONSTANTS ---------------------------------------------------------------------
 // These should not be changed at all
 
 //// Eyes
-#define EYES_OFF                  0
-#define EYES_ON                   1
-#define EYES_BLOCKED              2
+#define EYES_OFF                      0
+#define EYES_ON                       1
+#define EYES_BLOCKED                  2
 
 //// Trigger
-#define TRIGGER_STATE_WAITING     0
-#define TRIGGER_STATE_DEBOUNCING  1
-#define TRIGGER_STATE_PULLED      2
-#define TRIGGER_STATE_HELD        3
-#define TRIGGER_STATE_RELEASED    4
+#define TRIGGER_STATE_WAITING         0
+#define TRIGGER_STATE_DEBOUNCING      1
+#define TRIGGER_STATE_PULLED          2
+#define TRIGGER_STATE_HELD            3
+#define TRIGGER_STATE_RELEASED        4
 
 //// Fire modes
-#define FIREMODE_SEMI             1
-#define FIREMODE_AUTO             2
-#define FIREMODE_RAMP             3
-#define FIREMODE_JACKHAMMER       4 // fun mode that T2 wanted
+#define FIREMODE_SEMI                 1
+#define FIREMODE_AUTO                 2
+#define FIREMODE_RAMP                 3
+#define FIREMODE_JACKHAMMER           4 // fun mode that T2 wanted
 
 //// Gun modes
 #define GUNMODE_OPEN                  0 // cpen bolt
@@ -226,38 +229,38 @@ const byte LED_BLACK[]     = {  0, 0, 0 };
 // solid colors have same color 1 and color 2
 // blinking colors have color 1 set to color, and color 2 set to LED_OFF
 // alternating colors have differnt color 1 and color 2
-#define REGISTER_1_COLOR_1  LED_GREEN
-#define REGISTER_1_COLOR_2  LED_GREEN
-#define REGISTER_2_COLOR_1  LED_PURPLE
-#define REGISTER_2_COLOR_2  LED_PURPLE
-#define REGISTER_3_COLOR_1  LED_YELLOW
-#define REGISTER_3_COLOR_2  LED_YELLOW
-#define REGISTER_4_COLOR_1  LED_BLUE
-#define REGISTER_4_COLOR_2  LED_BLUE
-#define REGISTER_5_COLOR_1  LED_RED
-#define REGISTER_5_COLOR_2  LED_RED
-#define REGISTER_6_COLOR_1  LED_WHITE
-#define REGISTER_6_COLOR_2  LED_WHITE
-#define REGISTER_7_COLOR_1  LED_TEAL
-#define REGISTER_7_COLOR_2  LED_TEAL
-#define REGISTER_8_COLOR_1  LED_ORANGE
-#define REGISTER_8_COLOR_2  LED_ORANGE
-#define REGISTER_9_COLOR_1  LED_GREEN
-#define REGISTER_9_COLOR_2  LED_BLACK
-#define REGISTER_10_COLOR_1  LED_PURPLE
-#define REGISTER_10_COLOR_2  LED_BLACK
-#define REGISTER_11_COLOR_1  LED_YELLOW
-#define REGISTER_11_COLOR_2  LED_BLACK
-#define REGISTER_12_COLOR_1  LED_BLUE
-#define REGISTER_12_COLOR_2  LED_BLACK
-#define REGISTER_13_COLOR_1  LED_RED
-#define REGISTER_13_COLOR_2  LED_BLACK
-#define REGISTER_14_COLOR_1  LED_WHITE
-#define REGISTER_14_COLOR_2  LED_BLACK
-#define REGISTER_15_COLOR_1  LED_TEAL
-#define REGISTER_15_COLOR_2  LED_BLACK
-#define REGISTER_16_COLOR_1  LED_ORANGE
-#define REGISTER_16_COLOR_2  LED_BLACK
+#define REGISTER_1_COLOR_1      LED_GREEN
+#define REGISTER_1_COLOR_2      LED_GREEN
+#define REGISTER_2_COLOR_1      LED_PURPLE
+#define REGISTER_2_COLOR_2      LED_PURPLE
+#define REGISTER_3_COLOR_1      LED_YELLOW
+#define REGISTER_3_COLOR_2      LED_YELLOW
+#define REGISTER_4_COLOR_1      LED_BLUE
+#define REGISTER_4_COLOR_2      LED_BLUE
+#define REGISTER_5_COLOR_1      LED_RED
+#define REGISTER_5_COLOR_2      LED_RED
+#define REGISTER_6_COLOR_1      LED_WHITE
+#define REGISTER_6_COLOR_2      LED_WHITE
+#define REGISTER_7_COLOR_1      LED_TEAL
+#define REGISTER_7_COLOR_2      LED_TEAL
+#define REGISTER_8_COLOR_1      LED_ORANGE
+#define REGISTER_8_COLOR_2      LED_ORANGE
+#define REGISTER_9_COLOR_1      LED_GREEN
+#define REGISTER_9_COLOR_2      LED_BLACK
+#define REGISTER_10_COLOR_1     LED_PURPLE
+#define REGISTER_10_COLOR_2     LED_BLACK
+#define REGISTER_11_COLOR_1     LED_YELLOW
+#define REGISTER_11_COLOR_2     LED_BLACK
+#define REGISTER_12_COLOR_1     LED_BLUE
+#define REGISTER_12_COLOR_2     LED_BLACK
+#define REGISTER_13_COLOR_1     LED_RED
+#define REGISTER_13_COLOR_2     LED_BLACK
+#define REGISTER_14_COLOR_1     LED_WHITE
+#define REGISTER_14_COLOR_2     LED_BLACK
+#define REGISTER_15_COLOR_1     LED_TEAL
+#define REGISTER_15_COLOR_2     LED_BLACK
+#define REGISTER_16_COLOR_1     LED_ORANGE
+#define REGISTER_16_COLOR_2     LED_BLACK
 
 
 // uncomment the line below if you want to allow the user to 
