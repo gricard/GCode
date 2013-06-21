@@ -148,7 +148,7 @@ void programmingMode() {
         // still in the main menu, no input
         // alternate led colors
         unsigned long now = millis();
-        if( Prog_LastLEDBlinkMS <= (now - 200) ) {
+        if( Prog_LastLEDBlinkMS <= (now - 100) ) {
           Prog_LastLEDBlinkColor = (Prog_LastLEDBlinkColor == 2 ? 1 : 2);
           setLEDRegisterColor(Prog_CurrentRegister, Prog_LastLEDBlinkColor);
           Prog_LastLEDBlinkMS = now;
