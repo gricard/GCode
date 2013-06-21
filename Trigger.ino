@@ -120,7 +120,7 @@ int getTriggerState() {
       }
     } else { 
       // TRIGGER_OPEN == triggerReading
-      
+ /* old release/waiting code, keeping it around temporarily just in case
       if( TRIGGER_OPEN == triggerReading && TRIGGER_CLOSED == Trigger_PriorReading ) {
         // just let go of trigger
         Trigger_PriorState = Trigger_State;
@@ -144,6 +144,80 @@ int getTriggerState() {
       // trigger let go, reset stats
       Trigger_PriorReading = triggerReading;
       Debounce_PinSameStateCount = 0;
+      
+     */
+
+      #ifdef DEBUG_TRIGGER_LOGIC
+        DEBUG_PRINTLN("   LOW ");
+      #endif
+      
+      // trigger appears to be released
+      if( Trigger_PriorReading == triggerReading ) {
+        bool triggerDebounced = false;
+        
+        switch( Conf_DebounceMode ) {
+          case DEBOUNCE_MODE_DELAY:
+            triggerDebounced = debounceTriggerDelay();
+            break;           
+          case DEBOUNCE_MODE_DELAY_FINE:
+            triggerDebounced = debounceTriggerDelayFine();
+            break;
+            
+          default:
+          case DEBOUNCE_MODE_SEQUENTIAL:
+            triggerDebounced = debounceTriggerSequential();
+            break;
+        }
+        
+        if( triggerDebounced ) {
+          // bouncing has stopped, now perform trigger pull action
+          
+          if( TRIGGER_STATE_DEBOUNCING == Trigger_State ) {
+            Trigger_PriorState = Trigger_State;
+            Trigger_State = TRIGGER_STATE_RELEASED;
+
+            // do we need to track trigger release start?
+            //// track this once, when we first note that the trigger is pulled
+            //Trigger_PullStartMS = millis();
+
+            #ifdef DEBUG_TRIGGER_LOGIC
+            DEBUG_PRINTLN("Trigger=released");
+            DEBUG_PRINTLN("   debounce end...");
+            #endif
+          } else if( TRIGGER_STATE_RELEASED == Trigger_State ) {
+            // already registered the pull, but still getting trigger down signal
+            Trigger_State = TRIGGER_STATE_WAITING;
+            
+            #ifdef DEBUG_TRIGGER_LOGIC
+            DEBUG_PRINTLN("Trigger=waiting");
+            #endif
+          } else {
+            // Trigger_State is still TRIGGER_STATE_HELD
+            #ifdef DEBUG_TRIGGER_LOGIC
+            DEBUG_PRINTLN("Trigger=still waiting");
+            #endif
+          }
+          
+        } else {
+          // Trigger_State is still TRIGGER_STATE_DEBOUNCING
+          
+          #ifdef DEBUG_TRIGGER_LOGIC
+          DEBUG_PRINTLN("   release debounce...");
+          #endif
+        }
+      } else {
+        // trigger is up, start counting
+        Trigger_State = TRIGGER_STATE_DEBOUNCING;
+        Trigger_PriorReading = triggerReading;
+        
+        // track this for DEBOUNCE_MODE_SEQUENTIAL
+        Debounce_PinSameStateCount = 1;
+        
+        #ifdef DEBUG_TRIGGER_LOGIC
+        DEBUG_PRINTLN("   release debounce start, count=1...");
+        DEBUG_PRINTLN("Trigger=debouncing");
+        #endif
+      }
     }
     
     return Trigger_State;
