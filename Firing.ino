@@ -452,11 +452,11 @@ void firingMode() {
     FM_PostShotProcess(ShotFired);
     
     // if we haven't taken a shot in over SLEEP_MODE_TIMEOUT
-    if( !ShotFired && operationTiming > (Op_LastSleepMS + SLEEP_MODE_DELAY) &&  (Op_LastShotMS <= (operationTiming - SLEEP_MODE_TIMEOUT)) ) {
+    if( !ShotFired && operationTiming > (Op_LastSleepMS + SLEEP_MODE_DELAY) &&  (Op_LastPullMS <= (operationTiming - SLEEP_MODE_TIMEOUT)) ) {
       // go to sleep
       DEBUG_PRINTLN("going to sleep");
       delay(2000);
-      enterSleep();
+      goToSleep();
     } 
   } else {
     ledColor(LED_TEAL, 25);
@@ -502,7 +502,7 @@ void handleQueuedRampShots() {
   }
 }
 
-void enterSleep(void)
+void goToSleep(void)
 {
   DEBUG_FLUSH();
   
