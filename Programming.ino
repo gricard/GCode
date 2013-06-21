@@ -131,11 +131,11 @@ void programmingMode() {
           
           // short blink
           ledOff();
-          delay(250);
+          delay(100);
           setLEDRegisterColor(Prog_CurrentRegister, 1);
           delay(100);
           setLEDRegisterColor(Prog_CurrentRegister, 2);
-          
+
           DEBUG_PRINT("Changed to register ");DEBUG_PRINTLN(Prog_CurrentRegister);
         } else {
           DEBUG_PRINT("Programming register: ");DEBUG_PRINTLN(Prog_CurrentRegister);
