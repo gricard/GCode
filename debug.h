@@ -32,9 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef DEBUG_MODE
   #define DEBUG_PRINT(x) Serial.print(x)
   #define DEBUG_PRINTLN(x) Serial.println(x)
+  #define DEBUG_FLUSH() Serial.flush()
 #else
   #define DEBUG_PRINT(x)
   #define DEBUG_PRINTLN(x)
+  #define DEBUG_FLUSH()
 #endif
 
 #endif
