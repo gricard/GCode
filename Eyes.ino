@@ -23,15 +23,23 @@ into one code file before compiling, so this already has all includes
 
 */
 
-void eyesOn() {
+void enableEyeTX() {
   digitalWrite(EYE_TX_PIN, HIGH);
+}
+
+void eyesOn() {
+  enableEyeTX();
   
   // reset RGB color to eyes active
   ledColor(EYES_ON_LED_COLOR, LDB);
 }
 
-void eyesOff() {
+void disableEyeTX() {
   digitalWrite(EYE_TX_PIN, LOW);
+}
+
+void eyesOff() {
+  disableEyeTX();
   
   // reset RGB color to eyes inactive
   ledColor(EYES_OFF_LED_COLOR, LDB);
