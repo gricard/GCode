@@ -318,7 +318,6 @@ bool FM_ProcessShot() {
   //// Fire a shot
   // mech debounce
   int fireRateOver8BPS = false;
-  //int curROF = 0;
   unsigned long timeSinceLastShot = 0;
   
   if( Op_LastShotMS > 0 ) {
@@ -334,7 +333,7 @@ bool FM_ProcessShot() {
   
   // mech debounce method is based on the CodeX open source board software
   // https://code.google.com/p/paintballcodex/
-  if( !fireRateOver8BPS && Conf_MechDebounce > 0 ) {
+  if( fireRateOver8BPS && Conf_MechDebounce > 0 ) {
     delay(Conf_MechDebounce);
     //DEBUG_PRINT("     Mech Debounce MS= ");DEBUG_PRINTLN(Conf_MechDebounce - 1);
   }
