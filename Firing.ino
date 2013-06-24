@@ -280,8 +280,7 @@ bool FM_ProcessShot() {
   int msBetweenShots = 0;
   float curROFLimit = (EYES_ON == Op_EyeStatus ? Op_ROFEyesOn : Op_ROFEyesOff);
   
-  // ROF limit of 1 is uncapped
-  if( curROFLimit > 1  ) {
+  if( Op_UseROFCap ) {
     msBetweenShots = 1000 / curROFLimit;
   } else {
     msBetweenShots = 0;
